@@ -1,0 +1,169 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+// ── Users (mirrors auth.users via DB Trigger) ────────────────────────────────
+model User {
+  id        String   @id @db.Uuid
+  email     String   @unique
+  name      String?
+  avatarUrl String?  @map("avatar_url")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  ownedWorkspaces  Workspace[]       @relation("WorkspaceOwner")
+  workspaceMembers WorkspaceMember[]
+  usageLedger      UsageLedger[]
+
+  @@map("users")
+}
+
+// ── Workspaces ───────────────────────────────────────────────────────────────
+model Workspace {
+  id               String   @id @default(uuid()) @db.Uuid
+  name             String
+  ownerId          String   @map("owner_id") @db.Uuid
+  aiCreditsUsed    Int      @default(0) @map("ai_credits_used")
+  aiCreditsLimit   Int      @default(100) @map("ai_credits_limit")
+  creditsResetAt   DateTime @map("credits_reset_at")
+  maxClients       Int      @default(5) @map("max_clients")
+  maxMembers       Int      @default(1) @map("max_members")
+  createdAt        DateTime @default(now()) @map("created_at")
+  updatedAt        DateTime @updatedAt @map("updated_at")
+
+  owner         User              @relation("WorkspaceOwner", fields: [ownerId], references: [id])
+  members       WorkspaceMember[]
+  clients       Client[]
+  uploadedFiles UploadedFile[]
+  datasets      Dataset[]
+  reports       Report[]
+  usageLedger   UsageLedger[]
+
+  @@map("workspaces")
+}
+
+model WorkspaceMember {
+  id          String   @id @default(uuid()) @db.Uuid
+  workspaceId String   @map("workspace_id") @db.Uuid
+  userId      String   @map("user_id") @db.Uuid
+  role        String   @default("member") // 'owner' | 'member'
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([workspaceId, userId])
+  @@map("workspace_members")
+}
+
+// ── Clients ──────────────────────────────────────────────────────────────────
+model Client {
+  id          String   @id @default(uuid()) @db.Uuid
+  workspaceId String   @map("workspace_id") @db.Uuid
+  name        String
+  website     String?
+  logoUrl     String?  @map("logo_url")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  workspace     Workspace      @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  uploadedFiles UploadedFile[]
+  datasets      Dataset[]
+  reports       Report[]
+
+  @@map("clients")
+}
+
+// ── Files & Datasets ─────────────────────────────────────────────────────────
+model UploadedFile {
+  id          String   @id @default(uuid()) @db.Uuid
+  workspaceId String   @map("workspace_id") @db.Uuid
+  clientId    String   @map("client_id") @db.Uuid
+  filename    String
+  storagePath String   @map("storage_path")
+  fileSize    Int      @map("file_size")
+  dataType    String   @map("data_type") // 'gsc' | 'ga4'
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  client    Client    @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  datasets  Dataset[]
+
+  @@map("uploaded_files")
+}
+
+model Dataset {
+  id                 String   @id @default(uuid()) @db.Uuid
+  workspaceId        String   @map("workspace_id") @db.Uuid
+  clientId           String   @map("client_id") @db.Uuid
+  uploadedFileId     String   @map("uploaded_file_id") @db.Uuid
+  dataType           String   @map("data_type") // 'gsc' | 'ga4'
+  reportMonth        String   @map("report_month")
+  previousMonth      String?  @map("previous_month")
+  summaryMetricsJson Json     @map("summary_metrics_json")
+  createdAt          DateTime @default(now()) @map("created_at")
+
+  workspace    Workspace    @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  client       Client       @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  uploadedFile UploadedFile @relation(fields: [uploadedFileId], references: [id], onDelete: Cascade)
+  reports      Report[]
+
+  @@map("datasets")
+}
+
+// ── Reports ──────────────────────────────────────────────────────────────────
+model Report {
+  id          String   @id @default(uuid()) @db.Uuid
+  workspaceId String   @map("workspace_id") @db.Uuid
+  clientId    String   @map("client_id") @db.Uuid
+  datasetId   String   @map("dataset_id") @db.Uuid
+  title       String
+  status      String   @default("draft") // 'draft' | 'final'
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  workspace   Workspace     @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  client      Client        @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  dataset     Dataset       @relation(fields: [datasetId], references: [id], onDelete: Cascade)
+  blocks      ReportBlock[]
+  usageLedger UsageLedger[]
+
+  @@map("reports")
+}
+
+model ReportBlock {
+  id        String   @id @default(uuid()) @db.Uuid
+  reportId  String   @map("report_id") @db.Uuid
+  blockType String   @map("block_type") // 'executive_summary' | 'kpi_snapshot' | 'wins_concerns' | 'opportunities' | 'action_plan'
+  content   Json
+  order     Int      @default(0)
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  report Report @relation(fields: [reportId], references: [id], onDelete: Cascade)
+
+  @@map("report_blocks")
+}
+
+// ── Usage & Credits ──────────────────────────────────────────────────────────
+model UsageLedger {
+  id          String   @id @default(uuid()) @db.Uuid
+  workspaceId String   @map("workspace_id") @db.Uuid
+  userId      String   @map("user_id") @db.Uuid
+  reportId    String?  @map("report_id") @db.Uuid
+  action      String   // 'generate_report' | 'regenerate_block' | 'change_tone' | 'fix_risk'
+  creditsUsed Int      @map("credits_used")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  report    Report?   @relation(fields: [reportId], references: [id], onDelete: SetNull)
+
+  @@map("usage_ledger")
+}
