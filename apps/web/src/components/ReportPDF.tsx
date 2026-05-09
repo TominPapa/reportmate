@@ -129,6 +129,8 @@ const s = StyleSheet.create({
 
   // ── Data table ──────────────────────────────────────────
   dataTableWrapper: { paddingHorizontal: 40, marginTop: 4 },
+  dataTableRow:    { flexDirection: 'row', paddingVertical: 7, paddingHorizontal: 10, borderBottomWidth: 1, borderBottomColor: '#f1f5f9' },
+  dataTableRowAlt: { flexDirection: 'row', paddingVertical: 7, paddingHorizontal: 10, backgroundColor: LIGHT, borderBottomWidth: 1, borderBottomColor: '#f1f5f9' },
 
   // ── Position styles ─────────────────────────────────────
   posGreen:  { fontSize: 8.5, color: GREEN, fontFamily: 'Helvetica-Bold' },
@@ -611,7 +613,7 @@ export function ReportPDF({ data }: { data: PDFReportData }) {
 
               {dataType === 'gsc'
                 ? (gscQueries ?? []).map((q, i) => (
-                    <View key={i} style={i % 2 === 0 ? s.tableRow : s.tableRowAlt}>
+                    <View key={i} style={i % 2 === 0 ? s.dataTableRow : s.dataTableRowAlt}>
                       <Text style={[s.tableCellText, { flex: 3 }]}>{q.query.length > 38 ? q.query.slice(0, 38) + '…' : q.query}</Text>
                       <Text style={[s.tableCellText, { width: 55, textAlign: 'right' }]}>{q.clicks.toLocaleString()}</Text>
                       <Text style={[s.tableCellMuted, { width: 75, textAlign: 'right' }]}>{q.impressions.toLocaleString()}</Text>
@@ -620,7 +622,7 @@ export function ReportPDF({ data }: { data: PDFReportData }) {
                     </View>
                   ))
                 : (ga4Pages ?? []).map((p, i) => (
-                    <View key={i} style={i % 2 === 0 ? s.tableRow : s.tableRowAlt}>
+                    <View key={i} style={i % 2 === 0 ? s.dataTableRow : s.dataTableRowAlt}>
                       <Text style={[s.tableCellMuted, { flex: 3 }]}>{p.page.length > 38 ? p.page.slice(0, 38) + '…' : p.page}</Text>
                       <Text style={[s.tableCellText, { width: 60, textAlign: 'right' }]}>{p.sessions.toLocaleString()}</Text>
                       <Text style={[s.tableCellText, { width: 55, textAlign: 'right' }]}>{p.users.toLocaleString()}</Text>
