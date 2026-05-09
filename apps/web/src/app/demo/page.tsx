@@ -324,6 +324,26 @@ function ReportView({ data, logoBase64, onReset }: { data: ReportData; logoBase6
                 })}
               </tbody>
             </table>
+
+            {/* MoM Highlight Cards — 2×2, mirrors PDF Page 3 */}
+            {snapshotRows && snapshotRows.length > 0 && (
+              <div className="mt-6">
+                <div className="text-xs font-semibold text-zinc-400 uppercase tracking-widest mb-3">Month-over-Month Highlights</div>
+                <div className="grid grid-cols-2 gap-3">
+                  {snapshotRows.map((row, i) => {
+                    const isPos = row.status === 'positive';
+                    const isNeg = row.status === 'negative';
+                    return (
+                      <div key={i} className={`rounded-xl p-5 border ${isPos ? 'bg-emerald-50 border-emerald-100' : isNeg ? 'bg-red-50 border-red-100' : 'bg-zinc-50 border-zinc-100'}`}>
+                        <div className="text-xs text-zinc-400 uppercase tracking-wide mb-2">{row.metric}</div>
+                        <div className={`text-3xl font-bold mb-1 ${row.isGoodChange ? 'text-emerald-600' : 'text-red-500'}`}>{row.changeLabel}</div>
+                        <div className="text-xs text-zinc-500">{row.previous} → {row.current}</div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
           </div>
         )}
 
@@ -400,6 +420,40 @@ function ReportView({ data, logoBase64, onReset }: { data: ReportData; logoBase6
                 </li>
               ))}
             </ul>
+
+            {/* Query Position Distribution — GSC only, mirrors PDF Page 4 */}
+            {dataType === 'gsc' && gscQueries && gscQueries.length > 0 && (() => {
+              const top3   = gscQueries.filter(q => q.position <= 3);
+              const page1  = gscQueries.filter(q => q.position > 3 && q.position <= 10);
+              const beyond = gscQueries.filter(q => q.position > 10);
+              const total  = gscQueries.length;
+              const buckets = [
+                { label: 'Top 3',            count: top3.length,   clicks: top3.reduce((s, q)   => s + q.clicks, 0), bar: 'bg-emerald-500', text: 'text-emerald-600' },
+                { label: 'Page 1  (4 – 10)', count: page1.length,  clicks: page1.reduce((s, q)  => s + q.clicks, 0), bar: 'bg-amber-400',   text: 'text-amber-600'  },
+                { label: 'Beyond Page 1',    count: beyond.length, clicks: beyond.reduce((s, q) => s + q.clicks, 0), bar: 'bg-zinc-300',    text: 'text-zinc-500'   },
+              ];
+              return (
+                <div className="mt-6 pt-5 border-t border-zinc-100">
+                  <div className="text-xs font-semibold text-zinc-400 uppercase tracking-widest mb-4">Query Position Distribution</div>
+                  <div className="space-y-3">
+                    {buckets.map((b, i) => {
+                      const pct = total > 0 ? Math.round((b.count / total) * 100) : 0;
+                      return (
+                        <div key={i} className="flex items-center gap-3">
+                          <div className="w-32 text-xs text-zinc-600 shrink-0">{b.label}</div>
+                          <div className="flex-1 h-4 bg-zinc-100 rounded overflow-hidden">
+                            <div className={`h-full ${b.bar} rounded transition-all`} style={{ width: `${pct}%` }} />
+                          </div>
+                          <div className={`w-5 text-xs font-bold shrink-0 text-right ${b.text}`}>{b.count}</div>
+                          <div className="w-20 text-xs text-zinc-400 shrink-0 text-right">{b.clicks.toLocaleString()} clicks</div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                  <div className="text-xs text-zinc-400 mt-2">Based on {total} tracked queries</div>
+                </div>
+              );
+            })()}
           </div>
 
           <div className="border-t border-zinc-100" />
