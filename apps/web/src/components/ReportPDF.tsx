@@ -288,8 +288,28 @@ export function ReportPDF({ data }: { data: PDFReportData }) {
           </View>
         </View>
 
-        {/* Spacer pushes contents section to bottom */}
-        <View style={s.coverSpacer} />
+        {/* Decorative center element — fills empty space intentionally */}
+        <View style={{ flex: 1, justifyContent: 'center', paddingHorizontal: 40 }}>
+          <View style={{ borderTopWidth: 1, borderTopColor: '#1e293b', paddingTop: 20 }}>
+            <Text style={{ color: '#334155', fontSize: 8, letterSpacing: 2, textTransform: 'uppercase' }}>ReportMate  ·  AI-Powered Marketing Analysis</Text>
+          </View>
+          <View style={{ flexDirection: 'row', gap: 32, marginTop: 20 }}>
+            <View>
+              <Text style={{ color: '#64748b', fontSize: 7, letterSpacing: 0.5, marginBottom: 4 }}>Data Source</Text>
+              <Text style={{ color: '#94a3b8', fontSize: 9, fontFamily: 'Helvetica-Bold' }}>{dataSource}</Text>
+            </View>
+            <View>
+              <Text style={{ color: '#64748b', fontSize: 7, letterSpacing: 0.5, marginBottom: 4 }}>Reporting Period</Text>
+              <Text style={{ color: '#94a3b8', fontSize: 9, fontFamily: 'Helvetica-Bold' }}>{reportMonth}</Text>
+            </View>
+            {previousMonth && (
+              <View>
+                <Text style={{ color: '#64748b', fontSize: 7, letterSpacing: 0.5, marginBottom: 4 }}>Compared To</Text>
+                <Text style={{ color: '#94a3b8', fontSize: 9, fontFamily: 'Helvetica-Bold' }}>{previousMonth}</Text>
+              </View>
+            )}
+          </View>
+        </View>
 
         {/* Inside This Report — bottom of cover */}
         <View style={s.coverContents}>
@@ -361,6 +381,25 @@ export function ReportPDF({ data }: { data: PDFReportData }) {
           </View>
         )}
 
+        {/* Quick stats strip — fills remaining space on Page 2 */}
+        {chartItems.length > 0 && (
+          <View style={{ paddingHorizontal: 40, marginTop: 28 }}>
+            <View style={{ flexDirection: 'row', gap: 10 }}>
+              {[
+                { label: 'Top Performer', value: chartItems[0]?.label.length > 22 ? chartItems[0].label.slice(0, 22) + '…' : chartItems[0]?.label, sub: `${chartItems[0]?.value.toLocaleString()} ${dataType === 'gsc' ? 'clicks' : 'sessions'}` },
+                { label: 'Total Tracked', value: `${dataType === 'gsc' ? (gscQueries ?? []).length : (ga4Pages ?? []).length} ${dataType === 'gsc' ? 'queries' : 'pages'}`, sub: `from ${dataSource}` },
+                { label: 'Report Period', value: reportMonth, sub: previousMonth ? `vs ${previousMonth}` : 'current period' },
+              ].map((stat, i) => (
+                <View key={i} style={{ flex: 1, backgroundColor: LIGHT, borderRadius: 8, padding: 14, borderWidth: 1, borderColor: BORDER }}>
+                  <Text style={{ fontSize: 7, color: GRAY, textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 6 }}>{stat.label}</Text>
+                  <Text style={{ fontSize: 10, color: DARK, fontFamily: 'Helvetica-Bold', marginBottom: 3 }}>{stat.value}</Text>
+                  <Text style={{ fontSize: 7.5, color: GRAY }}>{stat.sub}</Text>
+                </View>
+              ))}
+            </View>
+          </View>
+        )}
+
         <Footer clientName={clientName} reportMonth={reportMonth} />
       </Page>
 
@@ -417,7 +456,7 @@ export function ReportPDF({ data }: { data: PDFReportData }) {
                     }}>
                       <Text style={{ fontSize: 7.5, color: GRAY, textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 10 }}>{row.metric}</Text>
                       <Text style={{ fontSize: 28, fontFamily: 'Helvetica-Bold', color: row.isGoodChange ? GREEN : RED, marginBottom: 6 }}>{row.changeLabel}</Text>
-                      <Text style={{ fontSize: 8.5, color: '#475569' }}>{row.previous} → {row.current}</Text>
+                      <Text style={{ fontSize: 8.5, color: '#475569' }}>{row.previous}{'  >  '}{row.current}</Text>
                     </View>
                   );
                 })}
