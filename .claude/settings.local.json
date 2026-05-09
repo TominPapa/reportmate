@@ -1,0 +1,30 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm --version)",
+      "Bash(npx --version)",
+      "Bash(pnpm --version)",
+      "Bash(npm install *)",
+      "Bash(npx create-next-app@latest web --typescript --tailwind --eslint --app --src-dir --import-alias \"@/*\" --no-turbopack --yes)",
+      "Bash(pnpm install *)",
+      "Bash(pnpm approve-builds *)",
+      "Bash(npx prisma *)",
+      "Bash(DATABASE_URL=\"postgresql://test:test@localhost:5432/test\" npx prisma validate --schema=./prisma/schema.prisma)",
+      "Bash(pnpm --filter web add next-auth @auth/prisma-adapter)",
+      "Bash(pnpm --filter web add -D @dm/db @dm/shared)",
+      "Bash(npx tsc *)",
+      "Bash(pnpm --filter web add bcryptjs)",
+      "Bash(pnpm --filter web add -D @types/bcryptjs)",
+      "Bash(DATABASE_URL=\"postgresql://test:test@localhost:5432/test\" npx prisma generate --schema=./prisma/schema.prisma)",
+      "Bash(dir \"D:\\\\Clode_Dev\\\\AutoMarketing\\\\sample-reports\")",
+      "Bash(git --version)",
+      "WebSearch",
+      "WebFetch(domain:www.notion.so)",
+      "mcp__Claude_in_Chrome__tabs_context_mcp",
+      "WebFetch(domain:reportr.agency)",
+      "WebFetch(domain:dashthis.com)",
+      "WebFetch(domain:agencyanalytics.com)",
+      "WebFetch(domain:twominutereports.com)"
+    ]
+  }
+}

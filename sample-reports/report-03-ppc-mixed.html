@@ -1,0 +1,999 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Monthly PPC Report — FitCore Studio | March 2026</title>
+  <style>
+    /* ── Reset & Base ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; }
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      color: #1a1a2e;
+      background: #f5f5f7;
+      line-height: 1.6;
+    }
+
+    /* ── Page Container ── */
+    .page {
+      width: 860px;
+      min-height: 1100px;
+      margin: 32px auto;
+      background: #fff;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 32px rgba(0,0,0,0.10);
+      page-break-after: always;
+    }
+    .page:last-of-type { page-break-after: auto; }
+
+    /* ── Cover Page ── */
+    .cover {
+      background: linear-gradient(145deg, #0d1b2a 0%, #1b263b 50%, #415a77 100%);
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 64px 56px;
+      min-height: 1100px;
+      position: relative;
+      overflow: hidden;
+    }
+    .cover::before {
+      content: '';
+      position: absolute;
+      top: -60px; right: -60px;
+      width: 360px; height: 360px;
+      background: radial-gradient(circle, rgba(245,158,11,0.2) 0%, transparent 70%);
+      border-radius: 50%;
+    }
+    .cover::after {
+      content: '';
+      position: absolute;
+      bottom: -80px; left: 40px;
+      width: 280px; height: 280px;
+      background: radial-gradient(circle, rgba(59,130,246,0.15) 0%, transparent 70%);
+      border-radius: 50%;
+    }
+    .cover-top { position: relative; z-index: 1; }
+    .brand-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 20px;
+      padding: 6px 16px;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      color: rgba(255,255,255,0.85);
+      margin-bottom: 24px;
+    }
+    .brand-dot {
+      width: 8px; height: 8px;
+      background: #f59e0b;
+      border-radius: 50%;
+    }
+    .cover-client {
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.55);
+      margin-bottom: 16px;
+    }
+    .cover-title {
+      font-size: 48px;
+      font-weight: 800;
+      line-height: 1.15;
+      color: #fff;
+      margin-bottom: 24px;
+    }
+    .cover-period {
+      font-size: 18px;
+      color: rgba(255,255,255,0.65);
+      margin-bottom: 48px;
+    }
+    .mixed-banner {
+      background: rgba(245,158,11,0.15);
+      border: 1px solid rgba(245,158,11,0.4);
+      border-left: 4px solid #f59e0b;
+      border-radius: 8px;
+      padding: 16px 20px;
+    }
+    .mixed-banner-label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      color: #fcd34d;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+    .mixed-banner-text {
+      font-size: 15px;
+      color: rgba(255,255,255,0.9);
+      font-weight: 500;
+    }
+
+    .cover-stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      margin-top: 48px;
+      position: relative;
+      z-index: 1;
+    }
+    .cover-stat {
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 12px;
+      padding: 20px;
+      text-align: center;
+    }
+    .cover-stat-val {
+      font-size: 30px;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 4px;
+    }
+    .cover-stat-val.warn { color: #fcd34d; }
+    .cover-stat-val.good { color: #86efac; }
+    .cover-stat-label {
+      font-size: 12px;
+      color: rgba(255,255,255,0.5);
+      font-weight: 500;
+    }
+
+    .cover-bottom {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      border-top: 1px solid rgba(255,255,255,0.1);
+      padding-top: 24px;
+    }
+    .cover-agency { font-size: 13px; color: rgba(255,255,255,0.45); }
+    .cover-agency strong { color: rgba(255,255,255,0.75); }
+    .cover-page-num { font-size: 12px; color: rgba(255,255,255,0.3); }
+
+    /* ── Section Pages ── */
+    .page-header {
+      background: #f8f9fc;
+      border-bottom: 1px solid #e8eaf0;
+      padding: 24px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .page-header-left { display: flex; flex-direction: column; gap: 2px; }
+    .page-label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #f59e0b;
+    }
+    .page-title { font-size: 20px; font-weight: 700; color: #1a1a2e; }
+    .page-client { font-size: 13px; color: #6b7280; }
+
+    .page-body { padding: 36px 40px; }
+
+    /* ── Section Titles ── */
+    .section-title {
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: #6b7280;
+      margin-bottom: 16px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid #f3f4f6;
+    }
+
+    /* ── Mixed Signal Box ── */
+    .mixed-box {
+      background: #fffbeb;
+      border: 1px solid #fde68a;
+      border-left: 4px solid #f59e0b;
+      border-radius: 8px;
+      padding: 20px 24px;
+      margin-bottom: 28px;
+    }
+    .mixed-box-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: #92400e;
+      margin-bottom: 8px;
+    }
+    .mixed-box p { font-size: 14px; color: #78350f; line-height: 1.7; }
+
+    /* ── Summary Grid ── */
+    .summary-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 28px;
+    }
+    .summary-card {
+      background: #f9fafb;
+      border: 1px solid #e5e7eb;
+      border-radius: 10px;
+      padding: 20px;
+    }
+    .summary-card.highlight {
+      background: #fffbeb;
+      border-color: #fde68a;
+    }
+    .summary-card-label {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #9ca3af;
+      margin-bottom: 8px;
+    }
+    .summary-card-text { font-size: 14px; color: #374151; line-height: 1.7; }
+
+    /* ── Evidence Tags ── */
+    .evidence-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 11px;
+      font-weight: 600;
+      background: #eff6ff;
+      color: #1d4ed8;
+      border: 1px solid #bfdbfe;
+      border-radius: 4px;
+      padding: 2px 8px;
+      margin: 2px 3px;
+      vertical-align: middle;
+      white-space: nowrap;
+    }
+    .evidence-tag.red { background: #fff5f5; color: #b91c1c; border-color: #fecaca; }
+    .evidence-tag.yellow { background: #fffbeb; color: #b45309; border-color: #fde68a; }
+    .evidence-tag.green { background: #f0fdf4; color: #15803d; border-color: #bbf7d0; }
+
+    /* ── Platform Split ── */
+    .platform-split {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin-bottom: 28px;
+    }
+    .platform-card {
+      border: 1px solid #e5e7eb;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    .platform-header {
+      padding: 12px 16px;
+      font-size: 14px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .platform-header.google { background: #eff6ff; color: #1d4ed8; }
+    .platform-header.meta { background: #f5f3ff; color: #7c3aed; }
+    .platform-metrics { padding: 0; }
+    .platform-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 16px;
+      border-bottom: 1px solid #f3f4f6;
+      font-size: 13px;
+    }
+    .platform-row:last-child { border-bottom: none; }
+    .platform-metric-name { color: #6b7280; font-weight: 500; }
+    .platform-metric-val { font-weight: 700; color: #111827; display: flex; align-items: center; gap: 6px; }
+    .delta { font-size: 11px; font-weight: 600; padding: 1px 6px; border-radius: 4px; }
+    .delta.up { background: #dcfce7; color: #15803d; }
+    .delta.down { background: #fee2e2; color: #b91c1c; }
+    .delta.flat { background: #f3f4f6; color: #6b7280; }
+
+    /* ── KPI Table ── */
+    .kpi-table { width: 100%; border-collapse: collapse; margin-bottom: 28px; }
+    .kpi-table thead th {
+      background: #f3f4f6;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: #6b7280;
+      padding: 10px 14px;
+      text-align: left;
+      border-bottom: 2px solid #e5e7eb;
+    }
+    .kpi-table tbody tr:hover { background: #f9fafb; }
+    .kpi-table tbody td {
+      padding: 12px 14px;
+      font-size: 14px;
+      color: #374151;
+      border-bottom: 1px solid #f3f4f6;
+      vertical-align: middle;
+    }
+    .kpi-table tbody tr:last-child td { border-bottom: none; }
+    .kpi-name { font-weight: 600; color: #111827; }
+    .kpi-change {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-weight: 700;
+      font-size: 14px;
+    }
+    .kpi-change.up { color: #16a34a; }
+    .kpi-change.down { color: #dc2626; }
+    .kpi-change.neutral { color: #6b7280; }
+    .status-pill {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 700;
+    }
+    .pill-red { background: #fee2e2; color: #b91c1c; }
+    .pill-yellow { background: #fef9c3; color: #92400e; }
+    .pill-green { background: #dcfce7; color: #15803d; }
+    .pill-gray { background: #f3f4f6; color: #6b7280; }
+    .pill-blue { background: #eff6ff; color: #1d4ed8; }
+
+    /* ── Analysis Blocks ── */
+    .analysis-block {
+      margin-bottom: 20px;
+      padding: 20px 24px;
+      border-radius: 10px;
+      border: 1px solid #e5e7eb;
+    }
+    .analysis-block.concern { border-left: 4px solid #e53935; }
+    .analysis-block.warning { border-left: 4px solid #f59e0b; }
+    .analysis-block.positive { border-left: 4px solid #16a34a; }
+    .analysis-block-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: #111827;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .analysis-block p { font-size: 14px; color: #374151; line-height: 1.75; }
+
+    /* ── Decision Matrix ── */
+    .decision-matrix {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 28px;
+    }
+    .decision-card {
+      border: 1px solid #e5e7eb;
+      border-radius: 10px;
+      padding: 16px 20px;
+    }
+    .decision-card-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: #111827;
+      margin-bottom: 8px;
+    }
+    .decision-card ul {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .decision-card li {
+      font-size: 13px;
+      color: #374151;
+      display: flex;
+      gap: 8px;
+      align-items: flex-start;
+    }
+
+    /* ── Action Items ── */
+    .action-list { list-style: none; display: flex; flex-direction: column; gap: 14px; }
+    .action-item {
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+      padding: 16px 20px;
+      border: 1px solid #e5e7eb;
+      border-radius: 10px;
+      background: #fafafa;
+    }
+    .action-num {
+      width: 28px; height: 28px;
+      background: #1a1a2e;
+      color: #fff;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: 700;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+    .action-num.urgent { background: #e53935; }
+    .action-num.soon { background: #f59e0b; }
+    .action-content { flex: 1; }
+    .action-title { font-size: 14px; font-weight: 700; color: #111827; margin-bottom: 4px; }
+    .action-desc { font-size: 13px; color: #6b7280; line-height: 1.6; }
+    .action-badges { display: flex; gap: 6px; margin-top: 8px; flex-wrap: wrap; }
+    .badge {
+      font-size: 11px;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 4px;
+    }
+    .badge-urgent { background: #fee2e2; color: #b91c1c; }
+    .badge-soon { background: #fef9c3; color: #b45309; }
+    .badge-plan { background: #eff6ff; color: #1d4ed8; }
+    .badge-google { background: #eff6ff; color: #1d4ed8; }
+    .badge-meta { background: #f5f3ff; color: #7c3aed; }
+    .badge-budget { background: #f0fdf4; color: #15803d; }
+    .badge-creative { background: #fff7ed; color: #c2410c; }
+
+    /* ── Print Button ── */
+    .print-btn {
+      position: fixed;
+      bottom: 32px; right: 32px;
+      background: #0d1b2a;
+      color: #fff;
+      border: none;
+      padding: 14px 24px;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+      z-index: 999;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .print-btn:hover { background: #1b263b; }
+
+    /* ── Footer ── */
+    .page-footer {
+      background: #f8f9fc;
+      border-top: 1px solid #e8eaf0;
+      padding: 14px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .footer-brand { font-size: 12px; color: #9ca3af; font-weight: 500; }
+    .footer-brand span { color: #6b7280; font-weight: 600; }
+    .footer-page { font-size: 12px; color: #d1d5db; }
+
+    /* ── Print CSS ── */
+    @page {
+      margin: 0;
+      size: A4 portrait;
+    }
+    @media print {
+      body { background: #fff; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+      .page {
+        width: 210mm;
+        height: 297mm;
+        min-height: unset;
+        margin: 0;
+        border-radius: 0;
+        box-shadow: none;
+        page-break-after: always;
+        page-break-inside: avoid;
+        overflow: hidden;
+      }
+      .cover {
+        height: 297mm;
+        min-height: unset;
+      }
+      .page-body {
+        padding: 20px 32px;
+      }
+      .section-title { margin-bottom: 10px; }
+      .summary-grid { gap: 10px; margin-bottom: 16px; }
+      .summary-card { padding: 12px; }
+      .platform-split { gap: 12px; margin-bottom: 16px; }
+      .kpi-table { margin-bottom: 16px; }
+      .analysis-block { margin-bottom: 12px; padding: 14px 18px; }
+      .action-list { gap: 10px; }
+      .action-item { padding: 12px 16px; }
+      .decision-matrix { gap: 10px; margin-bottom: 16px; }
+      .mixed-box { padding: 14px 18px; margin-bottom: 16px; }
+      .print-btn { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<button class="print-btn" onclick="window.print()">
+  ⬇ Save as PDF
+</button>
+
+<!-- ════════════════════════════════════════════
+     PAGE 1 — COVER
+════════════════════════════════════════════ -->
+<div class="page">
+  <div class="cover">
+    <div class="cover-top">
+      <div class="brand-tag">
+        <div class="brand-dot"></div>
+        ReportMate · AI-Generated Report
+      </div>
+      <div class="cover-client">FitCore Studio</div>
+      <div class="cover-title">Monthly PPC<br>Performance Report</div>
+      <div class="cover-period">March 2026 · Google Ads + Meta Ads · Mar 1–31</div>
+
+      <div class="mixed-banner">
+        <div class="mixed-banner-label">⚖ Mixed Signals</div>
+        <div class="mixed-banner-text">ROAS held steady, but rising CPC is quietly eroding margin. Google Ads and Meta Ads are telling very different stories this month.</div>
+      </div>
+    </div>
+
+    <div class="cover-stats">
+      <div class="cover-stat">
+        <div class="cover-stat-val good">3.8×</div>
+        <div class="cover-stat-label">Blended ROAS (vs 3.9× Feb)</div>
+      </div>
+      <div class="cover-stat">
+        <div class="cover-stat-val warn">+18.4%</div>
+        <div class="cover-stat-label">Avg CPC Increase MoM</div>
+      </div>
+      <div class="cover-stat">
+        <div class="cover-stat-val warn">$14,820</div>
+        <div class="cover-stat-label">Total Ad Spend (vs $12,500 Feb)</div>
+      </div>
+    </div>
+
+    <div class="cover-bottom">
+      <div class="cover-agency">
+        Prepared by <strong>Apex Digital Agency</strong> · agency@apexdigital.io
+      </div>
+      <div class="cover-page-num">Page 1 of 5</div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════
+     PAGE 2 — EXECUTIVE SUMMARY
+════════════════════════════════════════════ -->
+<div class="page">
+  <div class="page-header">
+    <div class="page-header-left">
+      <div class="page-label">Page 2 of 5</div>
+      <div class="page-title">Executive Summary</div>
+    </div>
+    <div class="page-client">FitCore Studio · March 2026</div>
+  </div>
+  <div class="page-body">
+
+    <div class="mixed-box">
+      <div class="mixed-box-title">⚖ What "Mixed Signals" Means for FitCore</div>
+      <p>On the surface, March looks fine — ROAS is nearly identical to February (3.8× vs 3.9×). But underneath, spend increased by $2,320 (+18.6%) while the number of conversions only grew by 4.2%. The platform-level picture is even more divided: Google Ads is under pressure, while Meta Ads delivered its best month in Q1.</p>
+    </div>
+
+    <div class="summary-grid">
+      <div class="summary-card highlight">
+        <div class="summary-card-label">The Hidden Problem</div>
+        <div class="summary-card-text">
+          Google Ads CPC rose from <strong>$1.84 → $2.18</strong>
+          <span class="evidence-tag yellow">↑ +18.5% MoM</span>
+          — likely driven by increased competition in "home gym equipment" keywords during March (tax refund season). If this trend continues into April, Google ROAS will fall below 3× without budget adjustments.
+        </div>
+      </div>
+      <div class="summary-card">
+        <div class="summary-card-label">The Bright Spot</div>
+        <div class="summary-card-text">
+          Meta Ads delivered a
+          <span class="evidence-tag green">4.6× ROAS</span>
+          in March — up from 4.1× in February. The new "Home Workout Challenge" video creative posted March 8 is responsible for the majority of this gain, generating
+          <span class="evidence-tag green">214 conversions</span>
+          at a $1.9% conversion rate.
+        </div>
+      </div>
+      <div class="summary-card">
+        <div class="summary-card-label">Revenue vs Spend</div>
+        <div class="summary-card-text">
+          Total ad spend: <strong>$14,820</strong>
+          <span class="evidence-tag yellow">↑ +$2,320 vs Feb</span>.
+          Total attributed revenue: <strong>$56,316</strong>
+          <span class="evidence-tag green">↑ +$4,100 vs Feb</span>.
+          Net ROAS held at 3.8× because revenue grew proportionally — but the spend buffer is thinning.
+        </div>
+      </div>
+      <div class="summary-card">
+        <div class="summary-card-label">Our Recommendation</div>
+        <div class="summary-card-text">
+          Shift $1,500–$2,000 of April budget from Google Ads into Meta Ads (video creatives) while CPC normalizes. Do not pause Google — maintain brand keyword coverage. Investigate Google Shopping as a lower-CPC alternative for product terms.
+        </div>
+      </div>
+    </div>
+
+    <div class="section-title">Key Question for April</div>
+    <div class="analysis-block warning">
+      <div class="analysis-block-title">🤔 Is the Google CPC Spike Seasonal or Structural?</div>
+      <p>
+        March–April sees elevated CPC in fitness-related keywords historically (New Year resolution tail + spring body prep). If this is seasonal,
+        <span class="evidence-tag yellow">CPC should normalize by May</span>
+        and the current Google strategy is sound. If competitors have permanently increased bids or new advertisers entered the auction, a strategic keyword audit will be needed.
+        <em>We recommend pulling a 90-day CPC trend in the April review to confirm.</em>
+      </p>
+    </div>
+
+  </div>
+  <div class="page-footer">
+    <div class="footer-brand"><span>ReportMate</span> · AI-powered agency reporting</div>
+    <div class="footer-page">Page 2 of 5</div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════
+     PAGE 3 — KPI SNAPSHOT
+════════════════════════════════════════════ -->
+<div class="page">
+  <div class="page-header">
+    <div class="page-header-left">
+      <div class="page-label">Page 3 of 5</div>
+      <div class="page-title">KPI Snapshot — Platform Breakdown</div>
+    </div>
+    <div class="page-client">FitCore Studio · March 2026</div>
+  </div>
+  <div class="page-body">
+
+    <div class="section-title">Platform Overview</div>
+    <div class="platform-split">
+      <div class="platform-card">
+        <div class="platform-header google">🔵 Google Ads</div>
+        <div class="platform-metrics">
+          <div class="platform-row">
+            <span class="platform-metric-name">Spend</span>
+            <span class="platform-metric-val">$9,840 <span class="delta down">↑ +$1,980</span></span>
+          </div>
+          <div class="platform-row">
+            <span class="platform-metric-name">Conversions</span>
+            <span class="platform-metric-val">328 <span class="delta up">↑ +12</span></span>
+          </div>
+          <div class="platform-row">
+            <span class="platform-metric-name">Revenue</span>
+            <span class="platform-metric-val">$31,024 <span class="delta up">↑ +$840</span></span>
+          </div>
+          <div class="platform-row">
+            <span class="platform-metric-name">ROAS</span>
+            <span class="platform-metric-val">3.15× <span class="delta down">↓ −0.44×</span></span>
+          </div>
+          <div class="platform-row">
+            <span class="platform-metric-name">Avg CPC</span>
+            <span class="platform-metric-val">$2.18 <span class="delta down">↑ +$0.34</span></span>
+          </div>
+          <div class="platform-row">
+            <span class="platform-metric-name">CVR</span>
+            <span class="platform-metric-val">2.31% <span class="delta down">↓ −0.18pp</span></span>
+          </div>
+          <div class="platform-row">
+            <span class="platform-metric-name">Impressions</span>
+            <span class="platform-metric-val">214,600 <span class="delta up">↑ +18K</span></span>
+          </div>
+        </div>
+      </div>
+      <div class="platform-card">
+        <div class="platform-header meta">🟣 Meta Ads (FB + IG)</div>
+        <div class="platform-metrics">
+          <div class="platform-row">
+            <span class="platform-metric-name">Spend</span>
+            <span class="platform-metric-val">$4,980 <span class="delta up">↑ +$340</span></span>
+          </div>
+          <div class="platform-row">
+            <span class="platform-metric-name">Conversions</span>
+            <span class="platform-metric-val">274 <span class="delta up">↑ +42</span></span>
+          </div>
+          <div class="platform-row">
+            <span class="platform-metric-name">Revenue</span>
+            <span class="platform-metric-val">$25,292 <span class="delta up">↑ +$3,260</span></span>
+          </div>
+          <div class="platform-row">
+            <span class="platform-metric-name">ROAS</span>
+            <span class="platform-metric-val" style="color:#15803d">4.64× <span class="delta up">↑ +0.54×</span></span>
+          </div>
+          <div class="platform-row">
+            <span class="platform-metric-name">Avg CPM</span>
+            <span class="platform-metric-val">$11.40 <span class="delta flat">≈ −$0.20</span></span>
+          </div>
+          <div class="platform-row">
+            <span class="platform-metric-name">CVR</span>
+            <span class="platform-metric-val">1.92% <span class="delta up">↑ +0.38pp</span></span>
+          </div>
+          <div class="platform-row">
+            <span class="platform-metric-name">Link Clicks</span>
+            <span class="platform-metric-val">14,260 <span class="delta up">↑ +2,800</span></span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-title">Combined Summary Table</div>
+    <table class="kpi-table">
+      <thead>
+        <tr>
+          <th>Metric</th>
+          <th>February Total</th>
+          <th>March Total</th>
+          <th>Change</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="kpi-name">Total Ad Spend</td>
+          <td>$12,500</td>
+          <td>$14,820</td>
+          <td><span class="kpi-change down">↑ +$2,320 (+18.6%)</span></td>
+          <td><span class="status-pill pill-yellow">Watch</span></td>
+        </tr>
+        <tr>
+          <td class="kpi-name">Total Conversions</td>
+          <td>579</td>
+          <td>602</td>
+          <td><span class="kpi-change up">↑ +23 (+4.0%)</span></td>
+          <td><span class="status-pill pill-yellow">Modest</span></td>
+        </tr>
+        <tr>
+          <td class="kpi-name">Total Revenue (Attributed)</td>
+          <td>$52,216</td>
+          <td>$56,316</td>
+          <td><span class="kpi-change up">↑ +$4,100 (+7.9%)</span></td>
+          <td><span class="status-pill pill-green">Positive</span></td>
+        </tr>
+        <tr>
+          <td class="kpi-name">Blended ROAS</td>
+          <td>3.9×</td>
+          <td>3.8×</td>
+          <td><span class="kpi-change neutral">↓ −0.1× (−2.6%)</span></td>
+          <td><span class="status-pill pill-yellow">Slight Dip</span></td>
+        </tr>
+        <tr>
+          <td class="kpi-name">Cost per Acquisition (CPA)</td>
+          <td>$21.59</td>
+          <td>$24.62</td>
+          <td><span class="kpi-change down">↑ +$3.03 (+14.0%)</span></td>
+          <td><span class="status-pill pill-yellow">Watch</span></td>
+        </tr>
+        <tr>
+          <td class="kpi-name">Google Ads ROAS</td>
+          <td>3.59×</td>
+          <td>3.15×</td>
+          <td><span class="kpi-change down">↓ −0.44×</span></td>
+          <td><span class="status-pill pill-red">Concern</span></td>
+        </tr>
+        <tr>
+          <td class="kpi-name">Meta Ads ROAS</td>
+          <td>4.10×</td>
+          <td>4.64×</td>
+          <td><span class="kpi-change up">↑ +0.54×</span></td>
+          <td><span class="status-pill pill-green">Strong</span></td>
+        </tr>
+      </tbody>
+    </table>
+
+  </div>
+  <div class="page-footer">
+    <div class="footer-brand"><span>ReportMate</span> · AI-powered agency reporting</div>
+    <div class="footer-page">Page 3 of 5</div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════
+     PAGE 4 — ANALYSIS
+════════════════════════════════════════════ -->
+<div class="page">
+  <div class="page-header">
+    <div class="page-header-left">
+      <div class="page-label">Page 4 of 5</div>
+      <div class="page-title">Signal Analysis</div>
+    </div>
+    <div class="page-client">FitCore Studio · March 2026</div>
+  </div>
+  <div class="page-body">
+
+    <div class="section-title">Google Ads — Warning Signs</div>
+
+    <div class="analysis-block concern">
+      <div class="analysis-block-title">⚠ CPC Rising Faster Than Conversions</div>
+      <p>
+        Google Ads CPC increased from $1.84 to $2.18
+        <span class="evidence-tag red">+18.5% CPC MoM</span>.
+        Spend increased by $1,980 but only generated 12 additional conversions
+        <span class="evidence-tag red">+3.8% conversions on +25% spend</span>.
+        This widening gap is the clearest warning signal in this month's data.
+        If spend grows faster than conversions, ROAS will continue declining even if revenue appears to grow.
+      </p>
+    </div>
+
+    <div class="analysis-block warning">
+      <div class="analysis-block-title">🟡 "Home Gym Equipment" Keywords Under Auction Pressure</div>
+      <p>
+        Average position for core non-brand keywords declined from 2.4 to 3.1
+        <span class="evidence-tag yellow">position drop −0.7</span>.
+        This is consistent with competitors raising bids. March is historically competitive in the fitness vertical
+        (tax refund stimulus + pre-summer body prep).
+        <em>This is an inference from position and CPC patterns; auction-level data not available in CSV.</em>
+      </p>
+    </div>
+
+    <div class="section-title">Meta Ads — What's Working</div>
+
+    <div class="analysis-block positive">
+      <div class="analysis-block-title">✅ Video Creative "Home Workout Challenge" is Outperforming</div>
+      <p>
+        The video ad launched March 8 generated
+        <span class="evidence-tag green">214 conversions</span>
+        — 78% of all Meta conversions this month — at a CVR of 1.9%.
+        Thumb-stop rate is estimated above average based on the CPM holding flat
+        <span class="evidence-tag green">CPM stable at $11.40</span>
+        despite increased impressions. This creative should be extended into April with
+        fresh hooks (first 3 seconds varied) to prevent fatigue.
+      </p>
+    </div>
+
+    <div class="analysis-block positive">
+      <div class="analysis-block-title">✅ Retargeting Audience Efficiency Improved</div>
+      <p>
+        Website retargeting audience (30-day visitors) showed a
+        <span class="evidence-tag green">2.8× higher CVR</span>
+        vs cold prospecting audiences in March.
+        Budget allocated to retargeting increased from 22% → 31% of Meta spend,
+        contributing to the overall ROAS improvement.
+        Consider expanding retargeting window to 60 days to grow the addressable audience.
+      </p>
+    </div>
+
+    <div class="section-title">Should We Rebalance Budget?</div>
+    <div class="decision-matrix">
+      <div class="decision-card">
+        <div class="decision-card-title">✅ Arguments FOR shifting budget to Meta</div>
+        <ul>
+          <li>💡 Meta ROAS is 4.64× vs Google's 3.15× this month</li>
+          <li>💡 Meta CPA is ~$18 vs Google's ~$30 this month</li>
+          <li>💡 Winning creative identified — can scale</li>
+          <li>💡 Google CPC rising with no sign of easing</li>
+        </ul>
+      </div>
+      <div class="decision-card">
+        <div class="analysis-block-title" style="font-size:13px; margin-bottom:8px; color:#111827;">⚠ Arguments AGAINST a full shift</div>
+        <ul>
+          <li>⚠ Google captures high-intent purchase searches</li>
+          <li>⚠ Meta conversion data may include view-through (not all cash)</li>
+          <li>⚠ Brand keyword pause risks competitor ad takeover</li>
+          <li>⚠ CPC spike may be seasonal — check May before restructuring</li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+  <div class="page-footer">
+    <div class="footer-brand"><span>ReportMate</span> · AI-powered agency reporting</div>
+    <div class="footer-page">Page 4 of 5</div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════
+     PAGE 5 — ACTION PLAN
+════════════════════════════════════════════ -->
+<div class="page">
+  <div class="page-header">
+    <div class="page-header-left">
+      <div class="page-label">Page 5 of 5</div>
+      <div class="page-title">April Action Plan</div>
+    </div>
+    <div class="page-client">FitCore Studio · March 2026</div>
+  </div>
+  <div class="page-body">
+
+    <div class="section-title">Recommended Actions</div>
+    <ul class="action-list">
+
+      <li class="action-item">
+        <div class="action-num urgent">1</div>
+        <div class="action-content">
+          <div class="action-title">Shift $1,500 from Google Non-Brand → Meta (Video)</div>
+          <div class="action-desc">
+            Reallocate budget from Google's non-brand campaigns (currently overspending relative to ROAS) into Meta's video campaign that generated 214 conversions in March. Keep Google brand keywords fully funded — do not reduce below current spend on brand terms.
+          </div>
+          <div class="action-badges">
+            <span class="badge badge-urgent">🔴 Urgent — April 1</span>
+            <span class="badge badge-budget">Budget</span>
+            <span class="badge badge-google">Google</span>
+            <span class="badge badge-meta">Meta</span>
+          </div>
+        </div>
+      </li>
+
+      <li class="action-item">
+        <div class="action-num urgent">2</div>
+        <div class="action-content">
+          <div class="action-title">Launch 3 New Video Creative Variants (Fresh Hooks)</div>
+          <div class="action-desc">
+            The "Home Workout Challenge" video will begin showing fatigue by Week 3 of April. Prepare 3 variants with different opening 3 seconds (hook A: question, hook B: transformation result, hook C: social proof). Keep the body identical — only vary the hook to identify what drives the click.
+          </div>
+          <div class="action-badges">
+            <span class="badge badge-urgent">🔴 Urgent — April 7</span>
+            <span class="badge badge-creative">Creative</span>
+            <span class="badge badge-meta">Meta</span>
+          </div>
+        </div>
+      </li>
+
+      <li class="action-item">
+        <div class="action-num soon">3</div>
+        <div class="action-content">
+          <div class="action-title">Audit Google Keyword CPC — Pause Low-ROAS Non-Brand Terms</div>
+          <div class="action-desc">
+            Run a keyword-level ROAS report in Google Ads. Identify any non-brand keywords with CPC above $2.50 and ROAS below 2.5×. Pause or significantly reduce bids on these terms. Expected spend savings: $400–$700/month without meaningful revenue impact.
+          </div>
+          <div class="action-badges">
+            <span class="badge badge-soon">🟡 Priority — April 5</span>
+            <span class="badge badge-google">Google</span>
+            <span class="badge badge-budget">Budget</span>
+          </div>
+        </div>
+      </li>
+
+      <li class="action-item">
+        <div class="action-num soon">4</div>
+        <div class="action-content">
+          <div class="action-title">Expand Meta Retargeting Window: 30 Days → 60 Days</div>
+          <div class="action-desc">
+            The 30-day retargeting audience drove 2.8× better CVR than prospecting. Expanding to 60 days will increase the addressable audience size by approximately 40% based on typical site traffic patterns. Monitor frequency cap to ensure users aren't seeing the same ad more than 4× per week.
+          </div>
+          <div class="action-badges">
+            <span class="badge badge-soon">🟡 Priority — April 3</span>
+            <span class="badge badge-meta">Meta</span>
+            <span class="badge badge-creative">Audience</span>
+          </div>
+        </div>
+      </li>
+
+      <li class="action-item">
+        <div class="action-num">5</div>
+        <div class="action-content">
+          <div class="action-title">Test Google Shopping Campaigns for Product Keywords</div>
+          <div class="action-desc">
+            Google Shopping typically delivers 15–25% lower CPC than Search for product-specific queries. Allocate $500 test budget to Shopping for top 5 SKUs. If CPA is below $20, scale to replace search spend on product terms. Review after 3 weeks.
+          </div>
+          <div class="action-badges">
+            <span class="badge badge-plan">📋 Test — April Week 2</span>
+            <span class="badge badge-google">Google</span>
+            <span class="badge badge-budget">Budget</span>
+          </div>
+        </div>
+      </li>
+
+    </ul>
+
+    <div style="margin-top:28px; padding:16px 20px; background:#f8f9fc; border-radius:8px; border:1px solid #e5e7eb;">
+      <div style="font-size:12px; color:#9ca3af; font-weight:600; margin-bottom:4px; text-transform:uppercase; letter-spacing:0.06em;">Projection Note</div>
+      <div style="font-size:13px; color:#374151; line-height:1.7;">
+        If budget reallocation (#1) and keyword pausing (#3) are implemented by April 5, we project blended ROAS
+        to recover to approximately <strong>4.0–4.2×</strong> by end of April at the same total spend level.
+        This projection assumes Meta video creative performance holds — which depends on creative refresh (#2) execution.
+        All projections are estimates based on observed trends and should be treated as directional guidance.
+        Questions? <strong>agency@apexdigital.io</strong>
+      </div>
+    </div>
+
+  </div>
+  <div class="page-footer">
+    <div class="footer-brand"><span>ReportMate</span> · AI-powered agency reporting</div>
+    <div class="footer-page">Page 5 of 5</div>
+  </div>
+</div>
+
+</body>
+</html>

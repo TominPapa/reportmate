@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SEO Monthly Report – Bloom Skincare Co. – March 2026</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Segoe UI', Arial, sans-serif; color: #1a1a2e; background: #fff; }
+
+  /* PAGE BREAKS */
+  .page { width: 794px; min-height: 1123px; margin: 0 auto 40px; padding: 60px 64px; position: relative; background: #fff; box-shadow: 0 2px 16px rgba(0,0,0,0.08); }
+  @page {
+    margin: 0;
+    size: A4;
+  }
+  @media print {
+    body { background: #fff; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .page { box-shadow: none; margin: 0; page-break-after: always; width: 100%; padding: 48px 56px; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .no-print { display: none; }
+    * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+  }
+
+  /* COLORS */
+  :root {
+    --brand: #2563eb;
+    --brand-light: #eff6ff;
+    --green: #16a34a;
+    --red: #dc2626;
+    --orange: #ea580c;
+    --gray: #6b7280;
+    --border: #e5e7eb;
+  }
+
+  /* COVER PAGE */
+  .cover { display: flex; flex-direction: column; justify-content: space-between; background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%); color: #fff; border-radius: 2px; }
+  .cover-logo { font-size: 22px; font-weight: 700; letter-spacing: -0.5px; opacity: 0.95; }
+  .cover-logo span { opacity: 0.6; font-weight: 400; font-size: 14px; margin-left: 4px; }
+  .cover-main { flex: 1; display: flex; flex-direction: column; justify-content: center; }
+  .cover-badge { display: inline-block; background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.25); color: #fff; font-size: 12px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; padding: 6px 14px; border-radius: 20px; margin-bottom: 28px; width: fit-content; }
+  .cover-title { font-size: 40px; font-weight: 700; line-height: 1.15; letter-spacing: -1px; margin-bottom: 16px; }
+  .cover-client { font-size: 22px; font-weight: 400; opacity: 0.85; margin-bottom: 8px; }
+  .cover-period { font-size: 15px; opacity: 0.6; }
+  .cover-footer { display: flex; justify-content: space-between; align-items: center; padding-top: 24px; border-top: 1px solid rgba(255,255,255,0.2); }
+  .cover-footer-agency { font-size: 14px; font-weight: 600; opacity: 0.9; }
+  .cover-footer-date { font-size: 13px; opacity: 0.55; }
+
+  /* SECTION HEADERS */
+  .section-label { font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--brand); margin-bottom: 6px; }
+  .section-title { font-size: 26px; font-weight: 700; letter-spacing: -0.5px; color: #111827; margin-bottom: 24px; }
+  .divider { border: none; border-top: 1px solid var(--border); margin: 28px 0; }
+
+  /* EXECUTIVE SUMMARY */
+  .summary-box { background: var(--brand-light); border-left: 4px solid var(--brand); border-radius: 6px; padding: 24px 28px; margin-bottom: 28px; }
+  .summary-box p { font-size: 15.5px; line-height: 1.8; color: #1f2937; }
+  .evidence-tag { display: inline; font-size: 11px; font-weight: 600; color: var(--brand); background: #dbeafe; padding: 2px 7px; border-radius: 10px; margin-left: 4px; vertical-align: middle; }
+  .highlight-row { display: flex; gap: 20px; margin-top: 20px; }
+  .highlight-card { flex: 1; background: #fff; border: 1px solid var(--border); border-radius: 8px; padding: 16px 18px; }
+  .highlight-card .label { font-size: 11px; color: var(--gray); font-weight: 600; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 6px; }
+  .highlight-card .value { font-size: 22px; font-weight: 700; color: #111827; }
+  .highlight-card .change { font-size: 13px; font-weight: 600; margin-top: 2px; }
+  .up { color: var(--green); }
+  .down { color: var(--red); }
+  .neutral { color: var(--gray); }
+
+  /* KPI TABLE */
+  .kpi-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  .kpi-table thead th { background: #f9fafb; color: var(--gray); font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: 0.8px; padding: 12px 16px; text-align: left; border-bottom: 2px solid var(--border); }
+  .kpi-table thead th:not(:first-child) { text-align: right; }
+  .kpi-table tbody td { padding: 13px 16px; border-bottom: 1px solid var(--border); color: #374151; }
+  .kpi-table tbody td:not(:first-child) { text-align: right; font-variant-numeric: tabular-nums; }
+  .kpi-table tbody tr:last-child td { border-bottom: none; }
+  .kpi-table tbody tr:hover td { background: #f9fafb; }
+  .metric-name { font-weight: 600; color: #111827; }
+  .change-pill { display: inline-block; font-size: 12px; font-weight: 700; padding: 3px 9px; border-radius: 20px; }
+  .pill-up { background: #dcfce7; color: var(--green); }
+  .pill-down { background: #fee2e2; color: var(--red); }
+  .pill-neutral { background: #f3f4f6; color: var(--gray); }
+  .source-note { font-size: 11px; color: var(--gray); margin-top: 10px; }
+
+  /* WINS & CONCERNS */
+  .win-concern-grid { display: flex; gap: 20px; }
+  .win-box { flex: 1; border-radius: 8px; padding: 22px; }
+  .win-box.wins { background: #f0fdf4; border: 1px solid #bbf7d0; }
+  .win-box.concerns { background: #fff7ed; border: 1px solid #fed7aa; }
+  .win-box-header { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 700; margin-bottom: 16px; }
+  .win-box-header .icon { font-size: 18px; }
+  .win-item { margin-bottom: 16px; padding-bottom: 16px; border-bottom: 1px solid rgba(0,0,0,0.06); }
+  .win-item:last-child { margin-bottom: 0; padding-bottom: 0; border-bottom: none; }
+  .win-item-title { font-size: 14px; font-weight: 600; color: #111827; margin-bottom: 4px; }
+  .win-item-body { font-size: 13px; color: #374151; line-height: 1.6; }
+  .win-item-inference { font-size: 12px; color: var(--gray); font-style: italic; margin-top: 4px; }
+
+  /* NEXT ACTIONS */
+  .action-list { list-style: none; }
+  .action-item { display: flex; gap: 14px; align-items: flex-start; padding: 16px 0; border-bottom: 1px solid var(--border); }
+  .action-item:last-child { border-bottom: none; }
+  .action-num { flex-shrink: 0; width: 28px; height: 28px; background: var(--brand); color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; margin-top: 1px; }
+  .action-content .title { font-size: 14.5px; font-weight: 600; color: #111827; margin-bottom: 4px; }
+  .action-content .desc { font-size: 13px; color: var(--gray); line-height: 1.5; }
+  .priority-badge { display: inline-block; font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 10px; margin-left: 8px; }
+  .priority-high { background: #fee2e2; color: var(--red); }
+  .priority-med { background: #fef9c3; color: #92400e; }
+  .priority-low { background: #f3f4f6; color: var(--gray); }
+
+  /* FOOTER */
+  .page-footer { position: absolute; bottom: 32px; left: 64px; right: 64px; display: flex; justify-content: space-between; align-items: center; font-size: 11px; color: #9ca3af; border-top: 1px solid var(--border); padding-top: 12px; }
+  .page-footer .disclaimer { font-size: 10px; color: #d1d5db; }
+
+  /* PRINT BUTTON */
+  .print-btn { position: fixed; bottom: 32px; right: 32px; background: var(--brand); color: #fff; border: none; border-radius: 8px; padding: 14px 24px; font-size: 15px; font-weight: 600; cursor: pointer; box-shadow: 0 4px 14px rgba(37,99,235,0.35); z-index: 100; }
+  .print-btn:hover { background: #1d4ed8; }
+</style>
+</head>
+<body>
+
+<button class="print-btn no-print" onclick="window.print()">📄 PDF로 저장</button>
+
+<!-- PAGE 1: COVER -->
+<div class="page cover">
+  <div class="cover-logo">Growth Agency <span>Digital Marketing</span></div>
+  <div class="cover-main">
+    <div class="cover-badge">Monthly Performance Report</div>
+    <div class="cover-title">SEO Performance<br>Report</div>
+    <div class="cover-client">Bloom Skincare Co.</div>
+    <div class="cover-period">Reporting Period: March 2026</div>
+  </div>
+  <div class="cover-footer">
+    <div class="cover-footer-agency">Prepared by Growth Agency</div>
+    <div class="cover-footer-date">Delivered: April 5, 2026</div>
+  </div>
+</div>
+
+<!-- PAGE 2: EXECUTIVE SUMMARY -->
+<div class="page">
+  <div class="section-label">Overview</div>
+  <div class="section-title">Executive Summary</div>
+
+  <div class="summary-box">
+    <p>
+      Organic traffic grew <strong>18.4% month-over-month</strong> in March, driven by strong performance in informational blog content.
+      <span class="evidence-tag">GA4 · Sessions +18.4%</span>
+      Four new articles published this month contributed to a <strong>31% increase in blog-sourced traffic</strong>.
+      <span class="evidence-tag">GA4 · /blog sessions</span>
+    </p>
+    <br>
+    <p>
+      Conversions recorded <strong>310 goal completions</strong>, a slight decline of 4.9% from February's 326.
+      <span class="evidence-tag">GA4 · Conversions</span>
+      This is worth monitoring — traffic quality appears consistent, suggesting the decline may reflect seasonal buying patterns rather than a structural issue.
+    </p>
+    <br>
+    <p>
+      Search visibility continues to improve. Average position moved from <strong>15.8 to 14.2</strong>, and two target keywords entered the top 10 for the first time.
+      <span class="evidence-tag">GSC · Avg. Position</span>
+    </p>
+  </div>
+
+  <div class="highlight-row">
+    <div class="highlight-card">
+      <div class="label">Sessions</div>
+      <div class="value">12,400</div>
+      <div class="change up">▲ +18.4% vs Feb</div>
+    </div>
+    <div class="highlight-card">
+      <div class="label">Conversions</div>
+      <div class="value">310</div>
+      <div class="change down">▼ -4.9% vs Feb</div>
+    </div>
+    <div class="highlight-card">
+      <div class="label">Avg. Position</div>
+      <div class="value">14.2</div>
+      <div class="change up">▲ Improved from 15.8</div>
+    </div>
+    <div class="highlight-card">
+      <div class="label">GSC Clicks</div>
+      <div class="value">4,820</div>
+      <div class="change up">▲ +17.5% vs Feb</div>
+    </div>
+  </div>
+
+  <div class="page-footer">
+    <span>Bloom Skincare Co. | March 2026 SEO Report</span>
+    <span class="disclaimer">Sample Data — Not Real Client Data | Prepared with ReportMate (Beta)</span>
+  </div>
+</div>
+
+<!-- PAGE 3: KPI SNAPSHOT -->
+<div class="page">
+  <div class="section-label">Performance Data</div>
+  <div class="section-title">KPI Snapshot</div>
+
+  <p style="font-size:13px;color:#6b7280;margin-bottom:20px;">Data sources: Google Analytics 4 (GA4) · Google Search Console (GSC) · March 1–31, 2026</p>
+
+  <table class="kpi-table">
+    <thead>
+      <tr>
+        <th>Metric</th>
+        <th>March 2026</th>
+        <th>February 2026</th>
+        <th>Change</th>
+        <th>Source</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="metric-name">Sessions</span></td>
+        <td>12,400</td>
+        <td>10,472</td>
+        <td><span class="change-pill pill-up">▲ +18.4%</span></td>
+        <td style="color:#9ca3af;font-size:12px;">GA4</td>
+      </tr>
+      <tr>
+        <td><span class="metric-name">New Users</span></td>
+        <td>8,210</td>
+        <td>6,980</td>
+        <td><span class="change-pill pill-up">▲ +17.6%</span></td>
+        <td style="color:#9ca3af;font-size:12px;">GA4</td>
+      </tr>
+      <tr>
+        <td><span class="metric-name">Conversions</span></td>
+        <td>310</td>
+        <td>326</td>
+        <td><span class="change-pill pill-down">▼ -4.9%</span></td>
+        <td style="color:#9ca3af;font-size:12px;">GA4</td>
+      </tr>
+      <tr>
+        <td><span class="metric-name">Conversion Rate</span></td>
+        <td>3.2%</td>
+        <td>3.1%</td>
+        <td><span class="change-pill pill-neutral">+0.1pt</span></td>
+        <td style="color:#9ca3af;font-size:12px;">GA4</td>
+      </tr>
+      <tr>
+        <td><span class="metric-name">Avg. Session Duration</span></td>
+        <td>2m 41s</td>
+        <td>2m 28s</td>
+        <td><span class="change-pill pill-up">▲ +8.8%</span></td>
+        <td style="color:#9ca3af;font-size:12px;">GA4</td>
+      </tr>
+      <tr>
+        <td><span class="metric-name">GSC Clicks</span></td>
+        <td>4,820</td>
+        <td>4,103</td>
+        <td><span class="change-pill pill-up">▲ +17.5%</span></td>
+        <td style="color:#9ca3af;font-size:12px;">GSC</td>
+      </tr>
+      <tr>
+        <td><span class="metric-name">GSC Impressions</span></td>
+        <td>89,400</td>
+        <td>76,200</td>
+        <td><span class="change-pill pill-up">▲ +17.3%</span></td>
+        <td style="color:#9ca3af;font-size:12px;">GSC</td>
+      </tr>
+      <tr>
+        <td><span class="metric-name">Click-Through Rate</span></td>
+        <td>5.4%</td>
+        <td>5.4%</td>
+        <td><span class="change-pill pill-neutral">Stable</span></td>
+        <td style="color:#9ca3af;font-size:12px;">GSC</td>
+      </tr>
+      <tr>
+        <td><span class="metric-name">Average Position</span></td>
+        <td>14.2</td>
+        <td>15.8</td>
+        <td><span class="change-pill pill-up">▲ Improved</span></td>
+        <td style="color:#9ca3af;font-size:12px;">GSC</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p class="source-note" style="margin-top:16px;">* All data pulled from GA4 and GSC exports. Conversion goal: Purchase Complete event.</p>
+
+  <div class="page-footer">
+    <span>Bloom Skincare Co. | March 2026 SEO Report</span>
+    <span class="disclaimer">Sample Data — Not Real Client Data | Prepared with ReportMate (Beta)</span>
+  </div>
+</div>
+
+<!-- PAGE 4: WINS & CONCERNS -->
+<div class="page">
+  <div class="section-label">Analysis</div>
+  <div class="section-title">Wins & Concerns</div>
+
+  <div class="win-concern-grid">
+    <div class="win-box wins">
+      <div class="win-box-header">
+        <span class="icon">✅</span>
+        <span style="color:#15803d;">What Went Well</span>
+      </div>
+
+      <div class="win-item">
+        <div class="win-item-title">Blog content drove 31% traffic surge</div>
+        <div class="win-item-body">4 new articles published in March collectively contributed 1,840 incremental sessions. The /blog section now accounts for 38% of all organic traffic, up from 29% last month.</div>
+        <div style="margin-top:6px;"><span class="evidence-tag">GA4 · /blog sessions +31.2%</span></div>
+      </div>
+
+      <div class="win-item">
+        <div class="win-item-title">2 target keywords entered Top 10</div>
+        <div class="win-item-body">"best moisturizer for dry skin" improved from position 9.3 to 4.8. "hydrating serum review" moved from 14.1 to 7.2.</div>
+        <div style="margin-top:6px;"><span class="evidence-tag">GSC · Keyword positions</span></div>
+      </div>
+
+      <div class="win-item">
+        <div class="win-item-title">Engagement quality improved</div>
+        <div class="win-item-body">Average session duration increased 8.8% to 2m 41s, suggesting content relevance is improving alongside traffic volume.</div>
+        <div style="margin-top:6px;"><span class="evidence-tag">GA4 · Avg. session duration</span></div>
+      </div>
+    </div>
+
+    <div class="win-box concerns">
+      <div class="win-box-header">
+        <span class="icon">⚠️</span>
+        <span style="color:#c2410c;">Areas to Watch</span>
+      </div>
+
+      <div class="win-item">
+        <div class="win-item-title">Conversions declined despite traffic growth</div>
+        <div class="win-item-body">310 conversions vs 326 in February (-4.9%). Traffic volume is up but purchase completions dropped slightly.</div>
+        <div class="win-item-inference">Possible explanation: New blog traffic may be earlier-stage visitors (informational intent), not yet ready to purchase. This is an inference, not confirmed.</div>
+        <div style="margin-top:6px;"><span class="evidence-tag">GA4 · Conversions -4.9%</span></div>
+      </div>
+
+      <div class="win-item">
+        <div class="win-item-title">Top landing page CTR below site average</div>
+        <div class="win-item-body">The /collections/serums page receives strong impressions (12,400/month) but CTR of 3.1% is below the site average of 5.4%, suggesting a meta description optimization opportunity.</div>
+        <div style="margin-top:6px;"><span class="evidence-tag">GSC · Page CTR report</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-footer">
+    <span>Bloom Skincare Co. | March 2026 SEO Report</span>
+    <span class="disclaimer">Sample Data — Not Real Client Data | Prepared with ReportMate (Beta)</span>
+  </div>
+</div>
+
+<!-- PAGE 5: NEXT ACTIONS -->
+<div class="page">
+  <div class="section-label">Recommendations</div>
+  <div class="section-title">April Action Plan</div>
+
+  <ul class="action-list">
+    <li class="action-item">
+      <div class="action-num">1</div>
+      <div class="action-content">
+        <div class="title">Publish 3 bottom-of-funnel articles targeting buying keywords <span class="priority-badge priority-high">High Priority</span></div>
+        <div class="desc">Current traffic gains are weighted toward informational content. To recover conversion rate, we recommend publishing 3 product-comparison or "best X for Y" articles this month that target users with purchase intent. Target keywords identified in GSC query report.</div>
+      </div>
+    </li>
+    <li class="action-item">
+      <div class="action-num">2</div>
+      <div class="action-content">
+        <div class="title">Optimize meta description for /collections/serums <span class="priority-badge priority-med">Medium Priority</span></div>
+        <div class="desc">This page has strong impression volume but below-average CTR (3.1% vs site avg 5.4%). Rewriting the meta description to include a clear value proposition and action phrase could improve click-through rate by an estimated 1–2 percentage points.</div>
+      </div>
+    </li>
+    <li class="action-item">
+      <div class="action-num">3</div>
+      <div class="action-content">
+        <div class="title">Monitor newly ranked keywords weekly <span class="priority-badge priority-med">Medium Priority</span></div>
+        <div class="desc">The two keywords that entered Top 10 this month are in positions 4.8 and 7.2 — prime territory for ranking volatility. We will track these weekly and respond quickly to any position drops with internal linking or content refreshes.</div>
+      </div>
+    </li>
+    <li class="action-item">
+      <div class="action-num">4</div>
+      <div class="action-content">
+        <div class="title">Review conversion funnel for blog-sourced traffic <span class="priority-badge priority-low">Low Priority</span></div>
+        <div class="desc">To better understand the conversion gap, we'll set up a GA4 funnel exploration comparing conversion rates by traffic source. This will confirm whether new blog visitors are converting at a lower rate and help us design appropriate CTAs for informational content pages.</div>
+      </div>
+    </li>
+  </ul>
+
+  <div style="background:#f9fafb;border:1px solid var(--border);border-radius:8px;padding:18px 22px;margin-top:28px;">
+    <div style="font-size:12px;font-weight:700;color:var(--gray);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:8px;">Next Report</div>
+    <div style="font-size:14px;color:#374151;">April 2026 performance report will be delivered by <strong>May 5, 2026</strong>. We will specifically track conversion rate recovery and keyword position stability as follow-ups to this month's action items.</div>
+  </div>
+
+  <div class="page-footer">
+    <span>Bloom Skincare Co. | March 2026 SEO Report</span>
+    <span class="disclaimer">Sample Data — Not Real Client Data | Prepared with ReportMate (Beta)</span>
+  </div>
+</div>
+
+</body>
+</html>
