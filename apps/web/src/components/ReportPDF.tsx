@@ -122,10 +122,10 @@ const s = StyleSheet.create({
 
   // ── Bar chart ───────────────────────────────────────────
   chartArea: { paddingHorizontal: 40, marginTop: 4 },
-  chartBars: { flexDirection: 'row', alignItems: 'flex-end', height: 90, gap: 6 },
-  chartBarWrapper: { flex: 1, alignItems: 'center', justifyContent: 'flex-end', height: 90 },
-  chartBarValue: { fontSize: 7.5, fontFamily: 'Helvetica-Bold', marginBottom: 3 },
-  chartBarLabel: { fontSize: 6.5, color: GRAY, marginTop: 5, textAlign: 'center' },
+  chartBars: { flexDirection: 'row', alignItems: 'flex-end', height: 160, gap: 6 },
+  chartBarWrapper: { flex: 1, alignItems: 'center', justifyContent: 'flex-end', height: 160 },
+  chartBarValue: { fontSize: 8, fontFamily: 'Helvetica-Bold', marginBottom: 4 },
+  chartBarLabel: { fontSize: 7, color: GRAY, marginTop: 6, textAlign: 'center' },
 
   // ── Data table ──────────────────────────────────────────
   dataTableWrapper: { paddingHorizontal: 40, marginTop: 4 },
@@ -134,6 +134,15 @@ const s = StyleSheet.create({
   posGreen:  { fontSize: 8.5, color: GREEN, fontFamily: 'Helvetica-Bold' },
   posYellow: { fontSize: 8.5, color: AMBER, fontFamily: 'Helvetica-Bold' },
   posRed:    { fontSize: 8.5, color: RED,   fontFamily: 'Helvetica-Bold' },
+
+  // ── Cover contents (bottom of cover page) ───────────────
+  coverSpacer: { flex: 1 },
+  coverContents: { paddingHorizontal: 40, paddingBottom: 70 },
+  coverContentsLabel: { fontSize: 7, color: '#334155', letterSpacing: 1.5, textTransform: 'uppercase', marginBottom: 14, fontFamily: 'Helvetica-Bold' },
+  coverContentsRow: { flexDirection: 'row', gap: 10 },
+  coverContentsCard: { flex: 1, borderTopWidth: 1, borderTopColor: '#334155', paddingTop: 10 },
+  coverContentsCardNum: { fontSize: 7, color: '#475569', marginBottom: 4 },
+  coverContentsCardTitle: { fontSize: 9, color: '#94a3b8', fontFamily: 'Helvetica-Bold' },
 
   // ── Footer ──────────────────────────────────────────────
   footer: { position: 'absolute', bottom: 20, left: 40, right: 40, flexDirection: 'row', justifyContent: 'space-between', borderTopWidth: 1, borderTopColor: '#1e293b', paddingTop: 8 },
@@ -221,7 +230,7 @@ export function ReportPDF({ data }: { data: PDFReportData }) {
     : (ga4Pages ?? []).slice(0, 5).map(p => ({ label: p.page.split('/').filter(Boolean).pop() || p.page, value: p.sessions }));
   const chartMax = Math.max(...chartItems.map(i => i.value), 1);
   const chartColor = dataType === 'gsc' ? BLUE : '#7c3aed';
-  const MAX_BAR_H = 56;
+  const MAX_BAR_H = 120;
 
   // Priority tags for actions
   const priorities = ['High', 'Medium', 'Medium', 'Low', 'Low'];
@@ -274,6 +283,27 @@ export function ReportPDF({ data }: { data: PDFReportData }) {
                     {kpi.mom.isGoodChange ? '▲' : '▼'} {kpi.mom.changeLabel} vs {prevLabel}
                   </Text>
                 )}
+              </View>
+            ))}
+          </View>
+        </View>
+
+        {/* Spacer pushes contents section to bottom */}
+        <View style={s.coverSpacer} />
+
+        {/* Inside This Report — bottom of cover */}
+        <View style={s.coverContents}>
+          <Text style={s.coverContentsLabel}>Inside This Report</Text>
+          <View style={s.coverContentsRow}>
+            {[
+              { num: '01', title: 'Executive Summary' },
+              { num: '02', title: 'KPI Snapshot' },
+              { num: '03', title: 'Wins & Concerns' },
+              { num: '04', title: 'Action Plan' },
+            ].map((item, i) => (
+              <View key={i} style={s.coverContentsCard}>
+                <Text style={s.coverContentsCardNum}>{item.num}</Text>
+                <Text style={s.coverContentsCardTitle}>{item.title}</Text>
               </View>
             ))}
           </View>

@@ -63,6 +63,7 @@ export default function DemoPage() {
   const [result, setResult] = useState<ReportData | null>(null);
   const [error, setError] = useState('');
   const [dragging, setDragging] = useState(false);
+  const [draggingPrev, setDraggingPrev] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
   const previousFileRef = useRef<HTMLInputElement>(null);
   const logoRef = useRef<HTMLInputElement>(null);
@@ -174,13 +175,16 @@ export default function DemoPage() {
                 <p className="text-xs text-zinc-400 mb-2">Optional — upload last month's export to show month-over-month changes</p>
                 <input type="text" placeholder="e.g. March 2026" value={previousMonth} onChange={(e) => setPreviousMonth(e.target.value)} className="w-full px-4 py-2.5 border border-zinc-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2" />
                 <div
+                  onDragOver={(e) => { e.preventDefault(); setDraggingPrev(true); }}
+                  onDragLeave={() => setDraggingPrev(false)}
+                  onDrop={(e) => { e.preventDefault(); setDraggingPrev(false); const f = e.dataTransfer.files[0]; if (f?.name.endsWith('.csv')) setPreviousFile(f); }}
                   onClick={() => previousFileRef.current?.click()}
-                  className="border border-dashed border-zinc-200 rounded-xl p-4 text-center cursor-pointer hover:bg-zinc-50 transition"
+                  className={`border-2 border-dashed rounded-xl p-6 text-center cursor-pointer transition ${draggingPrev ? 'border-blue-400 bg-blue-50' : 'border-zinc-200 hover:border-zinc-300 hover:bg-zinc-50'}`}
                 >
                   <input ref={previousFileRef} type="file" accept=".csv" className="hidden" onChange={(e) => setPreviousFile(e.target.files?.[0] || null)} />
                   {previousFile
-                    ? <div className="text-sm text-zinc-600 flex items-center justify-center gap-2"><span>📄</span>{previousFile.name}</div>
-                    : <div className="text-sm text-zinc-400">Click to upload previous month CSV</div>}
+                    ? <div><div className="text-2xl mb-1">📄</div><div className="text-sm font-medium text-zinc-700">{previousFile.name}</div><div className="text-xs text-zinc-400 mt-0.5">{(previousFile.size / 1024).toFixed(1)} KB</div></div>
+                    : <div><div className="text-2xl mb-1">📁</div><div className="text-sm font-medium text-zinc-600">Drop CSV here or click to upload</div><div className="text-xs text-zinc-400 mt-0.5">Only .csv files</div></div>}
                 </div>
               </div>
 
@@ -251,7 +255,7 @@ function ReportView({ data, logoBase64, onReset }: { data: ReportData; logoBase6
       <div className="bg-white rounded-2xl border border-zinc-200 shadow-sm overflow-hidden">
         {/* Cover Header */}
         <div className="bg-zinc-900 px-8 py-8">
-          <div className="flex items-start justify-between mb-6">
+          <div className="flex items-start justify-between mb-5">
             <div>
               {logoBase64
                 // eslint-disable-next-line @next/next/no-img-element
@@ -260,11 +264,15 @@ function ReportView({ data, logoBase64, onReset }: { data: ReportData; logoBase6
             </div>
             <div className="text-zinc-400 text-xs">{reportMonth}</div>
           </div>
+          <div className="inline-block border border-zinc-700 rounded-full px-3 py-1 mb-4">
+            <span className="text-zinc-400 text-xs tracking-widest uppercase">Monthly Performance Report</span>
+          </div>
+          <div className="text-zinc-400 text-sm mb-1">{dataSource}</div>
           <h1 className="text-white text-3xl font-bold mb-1">{clientName}</h1>
-          <div className="text-zinc-400 text-sm">{dataSource} · {totalItems} {itemLabel} analyzed</div>
+          <div className="text-zinc-500 text-xs mb-4">Reporting Period: {reportMonth}{previousMonth ? ` · vs ${previousMonth}` : ''}</div>
 
           {alertType && alertMessage && (
-            <div className={`mt-4 px-4 py-3 rounded-lg border text-sm font-medium ${alertColors[alertType]}`}>
+            <div className={`px-4 py-3 rounded-lg border text-sm font-medium ${alertColors[alertType]}`}>
               <span className="font-bold mr-2">{alertIcons[alertType]}</span>{alertMessage}
             </div>
           )}
@@ -288,7 +296,8 @@ function ReportView({ data, logoBase64, onReset }: { data: ReportData; logoBase6
         {/* Snapshot Table (if MoM) */}
         {snapshotRows && snapshotRows.length > 0 && (
           <div className="px-8 py-6 border-b border-zinc-100">
-            <div className="text-xs font-semibold text-zinc-400 uppercase tracking-widest mb-3">KPI Snapshot</div>
+            <div className="text-xs font-bold text-blue-600 uppercase tracking-widest mb-1">Performance Data</div>
+            <div className="text-xl font-bold text-zinc-900 mb-4">KPI Snapshot</div>
             <table className="w-full text-sm">
               <thead>
                 <tr className="bg-zinc-50">
@@ -318,70 +327,70 @@ function ReportView({ data, logoBase64, onReset }: { data: ReportData; logoBase6
           </div>
         )}
 
-        <div className="p-8 space-y-6">
-          {/* Bar Chart - Top 5 */}
-          {(gscQueries || ga4Pages) && (() => {
-            const items = dataType === 'gsc' ? (gscQueries || []).slice(0, 5) : (ga4Pages || []).slice(0, 5);
-            const maxVal = dataType === 'gsc'
-              ? Math.max(...items.map(q => (q as GSCQuery).clicks))
-              : Math.max(...items.map(p => (p as GA4Page).sessions));
-            return (
-              <div>
-                <div className="text-xs font-semibold text-zinc-400 uppercase tracking-widest mb-4">
-                  {dataType === 'gsc' ? 'Top Queries by Clicks' : 'Top Pages by Sessions'}
-                </div>
-                <div className="space-y-2.5">
-                  {items.map((item, i) => {
-                    const val = dataType === 'gsc' ? (item as GSCQuery).clicks : (item as GA4Page).sessions;
-                    const label = dataType === 'gsc' ? (item as GSCQuery).query : (item as GA4Page).page;
-                    const barPct = maxVal > 0 ? Math.round((val / maxVal) * 100) : 0;
-                    const colors = ['bg-blue-500', 'bg-blue-400', 'bg-blue-300', 'bg-sky-400', 'bg-sky-300'];
-                    return (
-                      <div key={i} className="flex items-center gap-3">
-                        <div className="w-36 text-xs text-zinc-600 truncate shrink-0 text-right">{label}</div>
-                        <div className="flex-1 h-5 bg-zinc-100 rounded overflow-hidden">
-                          <div className={`h-full ${colors[i]} rounded transition-all`} style={{ width: `${barPct}%` }} />
+        <div className="p-8 space-y-8">
+
+          {/* ── OVERVIEW ─────────────────────────────── */}
+          <div>
+            <div className="text-xs font-bold text-blue-600 uppercase tracking-widest mb-1">Overview</div>
+            <div className="text-xl font-bold text-zinc-900 mb-4">Executive Summary</div>
+            {/* Narrative box — matches PDF blue left-border box */}
+            <div className="border-l-4 border-blue-500 bg-blue-50 rounded-r-lg px-5 py-4 mb-5">
+              <p className="text-blue-900 leading-relaxed text-sm">{report.executive_summary}</p>
+              <p className="text-blue-700 text-sm mt-2 leading-relaxed">{report.kpi_narrative}</p>
+            </div>
+            {/* Bar Chart */}
+            {(gscQueries || ga4Pages) && (() => {
+              const items = dataType === 'gsc' ? (gscQueries || []).slice(0, 5) : (ga4Pages || []).slice(0, 5);
+              const maxVal = dataType === 'gsc'
+                ? Math.max(...items.map(q => (q as GSCQuery).clicks))
+                : Math.max(...items.map(p => (p as GA4Page).sessions));
+              return (
+                <div>
+                  <div className="text-xs font-semibold text-zinc-400 uppercase tracking-widest mb-4">
+                    {dataType === 'gsc' ? 'Top 5 Queries by Clicks' : 'Top 5 Pages by Sessions'}
+                  </div>
+                  <div className="space-y-2.5">
+                    {items.map((item, i) => {
+                      const val = dataType === 'gsc' ? (item as GSCQuery).clicks : (item as GA4Page).sessions;
+                      const label = dataType === 'gsc' ? (item as GSCQuery).query : (item as GA4Page).page;
+                      const barPct = maxVal > 0 ? Math.round((val / maxVal) * 100) : 0;
+                      const colors = ['bg-blue-600', 'bg-blue-500', 'bg-blue-400', 'bg-blue-300', 'bg-blue-200'];
+                      return (
+                        <div key={i} className="flex items-center gap-3">
+                          <div className="w-40 text-xs text-zinc-600 truncate shrink-0 text-right">{label}</div>
+                          <div className="flex-1 h-5 bg-zinc-100 rounded overflow-hidden">
+                            <div className={`h-full ${colors[i]} rounded transition-all`} style={{ width: `${barPct}%` }} />
+                          </div>
+                          <div className="text-xs font-bold text-zinc-700 w-14 shrink-0">{val.toLocaleString()}</div>
                         </div>
-                        <div className="text-xs font-semibold text-zinc-700 w-14 shrink-0">{val.toLocaleString()}</div>
-                      </div>
-                    );
-                  })}
+                      );
+                    })}
+                  </div>
                 </div>
+              );
+            })()}
+          </div>
+
+          <div className="border-t border-zinc-100" />
+
+          {/* ── ANALYSIS ─────────────────────────────── */}
+          <div>
+            <div className="text-xs font-bold text-blue-600 uppercase tracking-widest mb-1">Analysis</div>
+            <div className="text-xl font-bold text-zinc-900 mb-4">Wins &amp; Concerns</div>
+            <div className="grid grid-cols-2 gap-5 mb-6">
+              <div className="bg-emerald-50 rounded-xl p-5 border border-emerald-100">
+                <div className="text-xs font-bold text-emerald-700 uppercase tracking-widest mb-3">✓ What Went Well</div>
+                <ul className="space-y-2.5">
+                  {report.wins.map((w, i) => <li key={i} className="text-sm text-emerald-900 flex gap-2 leading-snug"><span className="text-emerald-500 shrink-0 mt-0.5">✓</span><span>{w}</span></li>)}
+                </ul>
               </div>
-            );
-          })()}
-
-          <div className="border-t border-zinc-100" />
-
-          {/* Executive Summary */}
-          <div>
-            <div className="text-xs font-semibold text-zinc-400 uppercase tracking-widest mb-3">Executive Summary</div>
-            <p className="text-zinc-700 leading-relaxed">{report.executive_summary}</p>
-            <p className="text-zinc-500 text-sm mt-2 leading-relaxed">{report.kpi_narrative}</p>
-          </div>
-
-          <div className="border-t border-zinc-100" />
-
-          {/* Wins & Concerns */}
-          <div className="grid grid-cols-2 gap-5">
-            <div className="bg-emerald-50 rounded-xl p-5">
-              <div className="text-xs font-semibold text-emerald-700 uppercase tracking-widest mb-3">✓ Wins</div>
-              <ul className="space-y-2.5">
-                {report.wins.map((w, i) => <li key={i} className="text-sm text-emerald-900 flex gap-2 leading-snug"><span className="text-emerald-500 shrink-0 mt-0.5">✓</span><span>{w}</span></li>)}
-              </ul>
+              <div className="bg-red-50 rounded-xl p-5 border border-red-100">
+                <div className="text-xs font-bold text-red-700 uppercase tracking-widest mb-3">! Areas to Watch</div>
+                <ul className="space-y-2.5">
+                  {report.concerns.map((c, i) => <li key={i} className="text-sm text-red-900 flex gap-2 leading-snug"><span className="text-red-400 shrink-0 mt-0.5">!</span><span>{c}</span></li>)}
+                </ul>
+              </div>
             </div>
-            <div className="bg-red-50 rounded-xl p-5">
-              <div className="text-xs font-semibold text-red-700 uppercase tracking-widest mb-3">! Concerns</div>
-              <ul className="space-y-2.5">
-                {report.concerns.map((c, i) => <li key={i} className="text-sm text-red-900 flex gap-2 leading-snug"><span className="text-red-400 shrink-0 mt-0.5">!</span><span>{c}</span></li>)}
-              </ul>
-            </div>
-          </div>
-
-          <div className="border-t border-zinc-100" />
-
-          {/* Opportunities */}
-          <div>
             <div className="text-xs font-semibold text-zinc-400 uppercase tracking-widest mb-3">Opportunities</div>
             <p className="text-sm text-blue-600 mb-4 leading-relaxed">{report.opportunity_insight}</p>
             <ul className="space-y-2.5">
@@ -395,25 +404,50 @@ function ReportView({ data, logoBase64, onReset }: { data: ReportData; logoBase6
 
           <div className="border-t border-zinc-100" />
 
-          {/* Next Actions */}
-          <div>
-            <div className="text-xs font-semibold text-zinc-400 uppercase tracking-widest mb-3">Recommended Next Actions</div>
-            <ol className="space-y-3">
-              {report.next_actions.map((a, i) => (
-                <li key={i} className="flex gap-3 leading-snug">
-                  <span className="w-6 h-6 rounded-full bg-zinc-900 text-white text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">{i + 1}</span>
-                  <span className="text-sm text-zinc-700">{a}</span>
-                </li>
-              ))}
-            </ol>
-          </div>
+          {/* ── RECOMMENDATIONS ──────────────────────── */}
+          {(() => {
+            const priorities = ['High', 'Medium', 'Medium', 'Low', 'Low'];
+            const priorityStyle: Record<string, string> = {
+              High: 'bg-red-100 text-red-700',
+              Medium: 'bg-amber-100 text-amber-700',
+              Low: 'bg-zinc-100 text-zinc-500',
+            };
+            const circleStyle: Record<string, string> = {
+              High: 'bg-red-500 text-white',
+              Medium: 'bg-amber-500 text-white',
+              Low: 'bg-zinc-400 text-white',
+            };
+            return (
+              <div>
+                <div className="text-xs font-bold text-blue-600 uppercase tracking-widest mb-1">Recommendations</div>
+                <div className="text-xl font-bold text-zinc-900 mb-4">Action Plan</div>
+                <ol className="space-y-4">
+                  {report.next_actions.map((a, i) => {
+                    const p = priorities[i] || 'Low';
+                    return (
+                      <li key={i} className="flex gap-3 items-start">
+                        <span className={`w-7 h-7 rounded-full text-xs font-bold flex items-center justify-center shrink-0 mt-0.5 ${circleStyle[p]}`}>{i + 1}</span>
+                        <div className="flex-1">
+                          <div className="flex items-start gap-2 flex-wrap">
+                            <span className="text-sm font-semibold text-zinc-800 flex-1 leading-snug">{a}</span>
+                            <span className={`text-xs font-semibold px-2 py-0.5 rounded-full shrink-0 ${priorityStyle[p]}`}>{p} Priority</span>
+                          </div>
+                        </div>
+                      </li>
+                    );
+                  })}
+                </ol>
+              </div>
+            );
+          })()}
 
-          {/* Data Table */}
+          {/* ── DATA APPENDIX ────────────────────────── */}
           {(gscQueries || ga4Pages) && (
             <>
               <div className="border-t border-zinc-100" />
               <div>
-                <div className="text-xs font-semibold text-zinc-400 uppercase tracking-widest mb-3">{dataType === 'gsc' ? 'Top Queries' : 'Top Pages'}</div>
+                <div className="text-xs font-bold text-zinc-400 uppercase tracking-widest mb-1">Data Appendix</div>
+                <div className="text-xl font-bold text-zinc-900 mb-4">{dataType === 'gsc' ? 'Query Data' : 'Page Data'}</div>
                 <table className="w-full text-xs">
                   <thead>
                     <tr className="bg-zinc-900 text-zinc-300">
@@ -427,19 +461,19 @@ function ReportView({ data, logoBase64, onReset }: { data: ReportData; logoBase6
                       ? (gscQueries || []).map((q, i) => (
                         <tr key={i} className={i % 2 === 0 ? '' : 'bg-zinc-50'}>
                           <td className="px-3 py-2 text-zinc-700">{q.query}</td>
-                          <td className="px-3 py-2 text-zinc-700">{q.clicks.toLocaleString()}</td>
-                          <td className="px-3 py-2 text-zinc-500">{q.impressions.toLocaleString()}</td>
-                          <td className="px-3 py-2 text-zinc-500">{q.ctr}%</td>
-                          <td className={`px-3 py-2 font-bold ${q.position <= 3 ? 'text-emerald-600' : q.position <= 10 ? 'text-amber-600' : 'text-red-500'}`}>{q.position}</td>
+                          <td className="px-3 py-2 text-zinc-700 text-right">{q.clicks.toLocaleString()}</td>
+                          <td className="px-3 py-2 text-zinc-500 text-right">{q.impressions.toLocaleString()}</td>
+                          <td className="px-3 py-2 text-zinc-500 text-right">{q.ctr}%</td>
+                          <td className={`px-3 py-2 font-bold text-right ${q.position <= 3 ? 'text-emerald-600' : q.position <= 10 ? 'text-amber-600' : 'text-red-500'}`}>{q.position}</td>
                         </tr>
                       ))
                       : (ga4Pages || []).map((p, i) => (
                         <tr key={i} className={i % 2 === 0 ? '' : 'bg-zinc-50'}>
                           <td className="px-3 py-2 text-zinc-500">{p.page}</td>
-                          <td className="px-3 py-2 text-zinc-700">{p.sessions.toLocaleString()}</td>
-                          <td className="px-3 py-2 text-zinc-700">{p.users.toLocaleString()}</td>
-                          <td className="px-3 py-2 text-zinc-500">{p.bounceRate}%</td>
-                          <td className="px-3 py-2 text-zinc-700">{p.conversions.toLocaleString()}</td>
+                          <td className="px-3 py-2 text-zinc-700 text-right">{p.sessions.toLocaleString()}</td>
+                          <td className="px-3 py-2 text-zinc-700 text-right">{p.users.toLocaleString()}</td>
+                          <td className="px-3 py-2 text-zinc-500 text-right">{p.bounceRate}%</td>
+                          <td className="px-3 py-2 text-zinc-700 text-right">{p.conversions.toLocaleString()}</td>
                         </tr>
                       ))}
                   </tbody>
