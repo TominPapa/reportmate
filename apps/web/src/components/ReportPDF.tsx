@@ -399,6 +399,32 @@ export function ReportPDF({ data }: { data: PDFReportData }) {
           </View>
 
           <Text style={s.footnote}>* All data sourced from {dataSource} exports. Position metric: lower value = better ranking.</Text>
+
+          {/* MoM Highlight Cards — 2×2 grid fills empty space */}
+          <View style={{ paddingHorizontal: 40, marginTop: 28 }}>
+            <Text style={s.sectionLabel}>Month-over-Month Highlights</Text>
+            {[0, 2].map(rowStart => (
+              <View key={rowStart} style={{ flexDirection: 'row', gap: 12, marginBottom: 12 }}>
+                {snapshotRows.slice(rowStart, rowStart + 2).map((row, i) => {
+                  const isPos = row.status === 'positive';
+                  const isNeg = row.status === 'negative';
+                  return (
+                    <View key={i} style={{
+                      flex: 1, borderRadius: 10, padding: 18,
+                      backgroundColor: isPos ? '#f0fdf4' : isNeg ? '#fff1f2' : LIGHT,
+                      borderWidth: 1,
+                      borderColor: isPos ? '#bbf7d0' : isNeg ? '#fecdd3' : BORDER,
+                    }}>
+                      <Text style={{ fontSize: 7.5, color: GRAY, textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 10 }}>{row.metric}</Text>
+                      <Text style={{ fontSize: 28, fontFamily: 'Helvetica-Bold', color: row.isGoodChange ? GREEN : RED, marginBottom: 6 }}>{row.changeLabel}</Text>
+                      <Text style={{ fontSize: 8.5, color: '#475569' }}>{row.previous} → {row.current}</Text>
+                    </View>
+                  );
+                })}
+              </View>
+            ))}
+          </View>
+
           <Footer clientName={clientName} reportMonth={reportMonth} />
         </Page>
       )}
@@ -446,6 +472,42 @@ export function ReportPDF({ data }: { data: PDFReportData }) {
             </View>
           ))}
         </View>
+
+        {/* Query Position Distribution — fills empty space on Page 4 */}
+        {dataType === 'gsc' && (gscQueries ?? []).length > 0 && (() => {
+          const allQ = gscQueries ?? [];
+          const top3   = allQ.filter(q => q.position <= 3);
+          const page1  = allQ.filter(q => q.position > 3 && q.position <= 10);
+          const beyond = allQ.filter(q => q.position > 10);
+          const total  = allQ.length;
+          const buckets = [
+            { label: 'Top 3',             count: top3.length,   clicks: top3.reduce((s, q)   => s + q.clicks, 0), color: GREEN  },
+            { label: 'Page 1  (4 – 10)',  count: page1.length,  clicks: page1.reduce((s, q)  => s + q.clicks, 0), color: AMBER  },
+            { label: 'Beyond Page 1',     count: beyond.length, clicks: beyond.reduce((s, q) => s + q.clicks, 0), color: '#94a3b8' },
+          ];
+          return (
+            <View style={[s.body, { marginTop: 16 }]}>
+              <View style={[s.divider, { marginHorizontal: 0, marginBottom: 16 }]} />
+              <Text style={s.sectionLabel}>Query Position Distribution</Text>
+              <View style={{ gap: 10 }}>
+                {buckets.map((b, i) => {
+                  const pct = total > 0 ? (b.count / total) * 100 : 0;
+                  return (
+                    <View key={i} style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                      <Text style={{ width: 110, fontSize: 8.5, color: '#374151' }}>{b.label}</Text>
+                      <View style={{ flex: 1, height: 16, backgroundColor: '#f1f5f9', borderRadius: 3 }}>
+                        <View style={{ width: `${pct}%`, height: 16, backgroundColor: b.color, borderRadius: 3 }} />
+                      </View>
+                      <Text style={{ width: 22, fontSize: 8.5, fontFamily: 'Helvetica-Bold', color: b.color, textAlign: 'right' }}>{b.count}</Text>
+                      <Text style={{ width: 72, fontSize: 7.5, color: GRAY, textAlign: 'right' }}>{b.clicks.toLocaleString()} clicks</Text>
+                    </View>
+                  );
+                })}
+              </View>
+              <Text style={{ fontSize: 7.5, color: '#94a3b8', marginTop: 10 }}>Based on {total} tracked queries · {reportMonth}</Text>
+            </View>
+          );
+        })()}
 
         <Footer clientName={clientName} reportMonth={reportMonth} />
       </Page>
