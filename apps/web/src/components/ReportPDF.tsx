@@ -54,25 +54,25 @@ const s = StyleSheet.create({
 
   // ── KPI Cards (summary page) ────────────────────────────
   kpiRow: { flexDirection: 'row', gap: 10, paddingHorizontal: 40, marginTop: 20 },
-  kpiCard: { flex: 1, borderWidth: 1, borderColor: BORDER, borderRadius: 8, padding: 14 },
+  kpiCard: { flex: 1, borderWidth: 1, borderColor: BORDER, borderRadius: 8, padding: 20 },
   kpiCardLabel: { color: GRAY, fontSize: 7.5, textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 5 },
-  kpiCardValueBlue:  { color: BLUE,  fontSize: 20, fontFamily: 'Helvetica-Bold' },
-  kpiCardValueGreen: { color: GREEN, fontSize: 20, fontFamily: 'Helvetica-Bold' },
-  kpiCardValueDark:  { color: DARK,  fontSize: 20, fontFamily: 'Helvetica-Bold' },
+  kpiCardValueBlue:  { color: BLUE,  fontSize: 24, fontFamily: 'Helvetica-Bold' },
+  kpiCardValueGreen: { color: GREEN, fontSize: 24, fontFamily: 'Helvetica-Bold' },
+  kpiCardValueDark:  { color: DARK,  fontSize: 24, fontFamily: 'Helvetica-Bold' },
   kpiMomPositive: { color: GREEN, fontSize: 7.5, marginTop: 3 },
   kpiMomNegative: { color: RED,   fontSize: 7.5, marginTop: 3 },
   kpiMomStable:   { color: GRAY,  fontSize: 7.5, marginTop: 3 },
 
   // ── Narrative box ───────────────────────────────────────
-  narrativeBox: { borderLeftWidth: 3, borderLeftColor: BLUE, backgroundColor: '#eff6ff', borderRadius: 4, padding: 16, marginHorizontal: 40, marginTop: 4 },
-  narrativeText: { fontSize: 10.5, color: '#1e3a5f', lineHeight: 1.7, marginBottom: 6 },
-  narrativeSubText: { fontSize: 9.5, color: '#3b5998', lineHeight: 1.6 },
+  narrativeBox: { borderLeftWidth: 3, borderLeftColor: BLUE, backgroundColor: '#eff6ff', borderRadius: 4, padding: 22, marginHorizontal: 40, marginTop: 4 },
+  narrativeText: { fontSize: 12, color: '#1e3a5f', lineHeight: 1.7, marginBottom: 8 },
+  narrativeSubText: { fontSize: 11, color: '#3b5998', lineHeight: 1.6 },
 
   // ── Snapshot table ──────────────────────────────────────
   tableWrapper: { paddingHorizontal: 40, marginTop: 4 },
   tableHeaderRow: { flexDirection: 'row', backgroundColor: DARK, paddingVertical: 7, paddingHorizontal: 10, borderRadius: 4, marginBottom: 1 },
-  tableRow:    { flexDirection: 'row', paddingVertical: 6, paddingHorizontal: 10, borderBottomWidth: 1, borderBottomColor: '#f1f5f9' },
-  tableRowAlt: { flexDirection: 'row', paddingVertical: 6, paddingHorizontal: 10, backgroundColor: LIGHT, borderBottomWidth: 1, borderBottomColor: '#f1f5f9' },
+  tableRow:    { flexDirection: 'row', paddingVertical: 10, paddingHorizontal: 10, borderBottomWidth: 1, borderBottomColor: '#f1f5f9' },
+  tableRowAlt: { flexDirection: 'row', paddingVertical: 10, paddingHorizontal: 10, backgroundColor: LIGHT, borderBottomWidth: 1, borderBottomColor: '#f1f5f9' },
   tableHeaderText: { fontSize: 7, fontFamily: 'Helvetica-Bold', color: '#94a3b8', textTransform: 'uppercase', letterSpacing: 0.5 },
   tableCellText: { fontSize: 8.5, color: '#334155' },
   tableCellMuted: { fontSize: 8.5, color: GRAY },
@@ -122,8 +122,8 @@ const s = StyleSheet.create({
 
   // ── Bar chart ───────────────────────────────────────────
   chartArea: { paddingHorizontal: 40, marginTop: 4 },
-  chartBars: { flexDirection: 'row', alignItems: 'flex-end', height: 160, gap: 6 },
-  chartBarWrapper: { flex: 1, alignItems: 'center', justifyContent: 'flex-end', height: 160 },
+  chartBars: { flexDirection: 'row', alignItems: 'flex-end', height: 220, gap: 6 },
+  chartBarWrapper: { flex: 1, alignItems: 'center', justifyContent: 'flex-end', height: 220 },
   chartBarValue: { fontSize: 8, fontFamily: 'Helvetica-Bold', marginBottom: 4 },
   chartBarLabel: { fontSize: 7, color: GRAY, marginTop: 6, textAlign: 'center' },
 
@@ -230,7 +230,7 @@ export function ReportPDF({ data }: { data: PDFReportData }) {
     : (ga4Pages ?? []).slice(0, 5).map(p => ({ label: p.page.split('/').filter(Boolean).pop() || p.page, value: p.sessions }));
   const chartMax = Math.max(...chartItems.map(i => i.value), 1);
   const chartColor = dataType === 'gsc' ? BLUE : '#7c3aed';
-  const MAX_BAR_H = 120;
+  const MAX_BAR_H = 180;
 
   // Priority tags for actions
   const priorities = ['High', 'Medium', 'Medium', 'Low', 'Low'];
@@ -288,8 +288,8 @@ export function ReportPDF({ data }: { data: PDFReportData }) {
           </View>
         </View>
 
-        {/* Decorative center element — fills empty space intentionally */}
-        <View style={{ flex: 1, justifyContent: 'center', paddingHorizontal: 40 }}>
+        {/* Meta info — sits right below KPI cards */}
+        <View style={{ paddingHorizontal: 40, marginTop: 36 }}>
           <View style={{ borderTopWidth: 1, borderTopColor: '#1e293b', paddingTop: 20 }}>
             <Text style={{ color: '#334155', fontSize: 8, letterSpacing: 2, textTransform: 'uppercase' }}>ReportMate  ·  AI-Powered Marketing Analysis</Text>
           </View>
@@ -310,6 +310,9 @@ export function ReportPDF({ data }: { data: PDFReportData }) {
             )}
           </View>
         </View>
+
+        {/* Spacer pushes "Inside This Report" to bottom */}
+        <View style={{ flex: 1 }} />
 
         {/* Inside This Report — bottom of cover */}
         <View style={s.coverContents}>
@@ -383,17 +386,17 @@ export function ReportPDF({ data }: { data: PDFReportData }) {
 
         {/* Quick stats strip — fills remaining space on Page 2 */}
         {chartItems.length > 0 && (
-          <View style={{ paddingHorizontal: 40, marginTop: 28 }}>
+          <View style={{ paddingHorizontal: 40, marginTop: 40 }}>
             <View style={{ flexDirection: 'row', gap: 10 }}>
               {[
                 { label: 'Top Performer', value: chartItems[0]?.label.length > 22 ? chartItems[0].label.slice(0, 22) + '…' : chartItems[0]?.label, sub: `${chartItems[0]?.value.toLocaleString()} ${dataType === 'gsc' ? 'clicks' : 'sessions'}` },
                 { label: 'Total Tracked', value: `${dataType === 'gsc' ? (gscQueries ?? []).length : (ga4Pages ?? []).length} ${dataType === 'gsc' ? 'queries' : 'pages'}`, sub: `from ${dataSource}` },
                 { label: 'Report Period', value: reportMonth, sub: previousMonth ? `vs ${previousMonth}` : 'current period' },
               ].map((stat, i) => (
-                <View key={i} style={{ flex: 1, backgroundColor: LIGHT, borderRadius: 8, padding: 14, borderWidth: 1, borderColor: BORDER }}>
-                  <Text style={{ fontSize: 7, color: GRAY, textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 6 }}>{stat.label}</Text>
-                  <Text style={{ fontSize: 10, color: DARK, fontFamily: 'Helvetica-Bold', marginBottom: 3 }}>{stat.value}</Text>
-                  <Text style={{ fontSize: 7.5, color: GRAY }}>{stat.sub}</Text>
+                <View key={i} style={{ flex: 1, backgroundColor: LIGHT, borderRadius: 8, padding: 26, borderWidth: 1, borderColor: BORDER }}>
+                  <Text style={{ fontSize: 7.5, color: GRAY, textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 10 }}>{stat.label}</Text>
+                  <Text style={{ fontSize: 12, color: DARK, fontFamily: 'Helvetica-Bold', marginBottom: 6 }}>{stat.value}</Text>
+                  <Text style={{ fontSize: 8.5, color: GRAY }}>{stat.sub}</Text>
                 </View>
               ))}
             </View>
@@ -440,23 +443,23 @@ export function ReportPDF({ data }: { data: PDFReportData }) {
           <Text style={s.footnote}>* All data sourced from {dataSource} exports. Position metric: lower value = better ranking.</Text>
 
           {/* MoM Highlight Cards — 2×2 grid fills empty space */}
-          <View style={{ paddingHorizontal: 40, marginTop: 28 }}>
+          <View style={{ paddingHorizontal: 40, marginTop: 44 }}>
             <Text style={s.sectionLabel}>Month-over-Month Highlights</Text>
             {[0, 2].map(rowStart => (
-              <View key={rowStart} style={{ flexDirection: 'row', gap: 12, marginBottom: 12 }}>
+              <View key={rowStart} style={{ flexDirection: 'row', gap: 16, marginBottom: 16 }}>
                 {snapshotRows.slice(rowStart, rowStart + 2).map((row, i) => {
                   const isPos = row.status === 'positive';
                   const isNeg = row.status === 'negative';
                   return (
                     <View key={i} style={{
-                      flex: 1, borderRadius: 10, padding: 18,
+                      flex: 1, borderRadius: 12, padding: 36,
                       backgroundColor: isPos ? '#f0fdf4' : isNeg ? '#fff1f2' : LIGHT,
                       borderWidth: 1,
                       borderColor: isPos ? '#bbf7d0' : isNeg ? '#fecdd3' : BORDER,
                     }}>
-                      <Text style={{ fontSize: 7.5, color: GRAY, textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 10 }}>{row.metric}</Text>
-                      <Text style={{ fontSize: 28, fontFamily: 'Helvetica-Bold', color: row.isGoodChange ? GREEN : RED, marginBottom: 6 }}>{row.changeLabel}</Text>
-                      <Text style={{ fontSize: 8.5, color: '#475569' }}>{row.previous}{'  >  '}{row.current}</Text>
+                      <Text style={{ fontSize: 8, color: GRAY, textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 16 }}>{row.metric}</Text>
+                      <Text style={{ fontSize: 48, fontFamily: 'Helvetica-Bold', color: row.isGoodChange ? GREEN : RED, marginBottom: 12 }}>{row.changeLabel}</Text>
+                      <Text style={{ fontSize: 10, color: '#475569' }}>{row.previous}{'  >  '}{row.current}</Text>
                     </View>
                   );
                 })}
