@@ -60,6 +60,11 @@ export default function ReportDetailClient({ report }: { report: Report }) {
           },
         }),
       })
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({ error: `HTTP ${res.status}` }))
+        alert(`PDF 생성 실패: ${errData.error ?? res.statusText}`)
+        return
+      }
       const blob = await res.blob()
       const url = URL.createObjectURL(blob)
       const a = document.createElement('a')
@@ -67,6 +72,8 @@ export default function ReportDetailClient({ report }: { report: Report }) {
       a.download = `${report.client.name}_${report.dataset.reportMonth}_report.pdf`
       a.click()
       URL.revokeObjectURL(url)
+    } catch (e) {
+      alert(`PDF 오류: ${e}`)
     } finally {
       setDownloading(false)
     }
