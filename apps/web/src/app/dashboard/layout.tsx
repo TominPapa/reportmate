@@ -1,6 +1,5 @@
 import { redirect } from 'next/navigation'
-import { createClient } from '@/lib/supabase/server'
-import { prisma } from '@/lib/prisma'
+import { getWorkspace } from '@/lib/get-workspace'
 import DashboardNav from '@/components/DashboardNav'
 
 export default async function DashboardLayout({
@@ -8,17 +7,10 @@ export default async function DashboardLayout({
 }: {
   children: React.ReactNode
 }) {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
+  const ctx = await getWorkspace()
+  if (!ctx) redirect('/login')
 
-  if (!user) redirect('/login')
-
-  const workspace = await prisma.workspace.findFirst({
-    where: { ownerId: user.id },
-    select: { id: true, name: true, aiCreditsUsed: true, aiCreditsLimit: true },
-  })
-
-  if (!workspace) redirect('/login')
+  const { user, workspace } = ctx
 
   return (
     <div className="min-h-screen bg-gray-50">

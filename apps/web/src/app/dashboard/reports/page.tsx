@@ -1,13 +1,13 @@
-import { createClient } from '@/lib/supabase/server'
 import { prisma } from '@/lib/prisma'
+import { getWorkspace } from '@/lib/get-workspace'
 import Link from 'next/link'
 
 export default async function ReportsPage() {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
+  const ctx = await getWorkspace()
+  const { workspace: ws } = ctx!
 
   const workspace = await prisma.workspace.findFirst({
-    where: { ownerId: user!.id },
+    where: { id: ws.id },
   })
 
   const reports = await prisma.report.findMany({

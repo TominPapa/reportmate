@@ -160,6 +160,32 @@ export async function POST(request: NextRequest) {
     promptContent = `Generate a monthly SEO performance report based on this Google Search Console data:\n\n${JSON.stringify(summaryMetrics, null, 2)}\n\nReturn a JSON object:\n{\n  "executive_summary": "2-3 sentences",\n  "kpi_narrative": "1-2 sentences",\n  "wins": ["win 1", "win 2", "win 3"],\n  "concerns": ["concern 1", "concern 2"],\n  "opportunities": ["opportunity 1", "opportunity 2", "opportunity 3"],\n  "next_actions": ["action 1", "action 2", "action 3"],\n  "top_query_insight": "1-2 sentences about top queries",\n  "opportunity_insight": "1-2 sentences about opportunity queries"\n}`
   }
 
+  // PDF용 KPI 데이터 구성 (summaryMetricsJson에 함께 저장)
+  const kpis = metrics.type === 'ga4'
+    ? [
+        { label: 'Sessions', value: metrics.totalSessions.toLocaleString(), color: 'blue' },
+        { label: 'Users', value: metrics.totalUsers.toLocaleString(), color: 'dark' },
+        { label: 'Conversions', value: metrics.totalConversions.toLocaleString(), color: 'green' },
+        { label: 'Avg Bounce Rate', value: `${metrics.avgBounceRate}%`, color: 'dark' },
+      ]
+    : [
+        { label: 'Total Clicks', value: metrics.totalClicks.toLocaleString(), color: 'blue' },
+        { label: 'Impressions', value: metrics.totalImpressions.toLocaleString(), color: 'dark' },
+        { label: 'Avg CTR', value: `${metrics.avgCTR}%`, color: 'green' },
+        { label: 'Avg Position', value: metrics.avgPosition.toString(), color: 'dark' },
+      ]
+
+  const totalItems = metrics.type === 'ga4' ? metrics.totalPages : metrics.totalQueries
+  const itemLabel = metrics.type === 'ga4' ? 'pages' : 'queries'
+  const gscQueries = metrics.type === 'gsc' ? metrics.allQueries.slice(0, 50) : undefined
+  const ga4Pages = metrics.type === 'ga4' ? metrics.allPages.slice(0, 50) : undefined
+
+  // summaryMetrics에 PDF 필드 추가
+  const fullMetrics = {
+    ...summaryMetrics,
+    _pdf: { kpis, totalItems, itemLabel, dataSource, gscQueries, ga4Pages },
+  }
+
   // AI 호출
   const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
   const message = await anthropic.messages.create({
@@ -196,7 +222,7 @@ export async function POST(request: NextRequest) {
         dataType: metrics.type,
         reportMonth,
         previousMonth: previousMonth || null,
-        summaryMetricsJson: summaryMetrics as object,
+        summaryMetricsJson: fullMetrics as object,
       },
     })
 

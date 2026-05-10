@@ -1,13 +1,13 @@
-import { createClient } from '@/lib/supabase/server'
 import { prisma } from '@/lib/prisma'
+import { getWorkspace } from '@/lib/get-workspace'
 import Link from 'next/link'
 
 export default async function DashboardPage() {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
+  const ctx = await getWorkspace()
+  const { user, workspace: ws } = ctx!
 
   const workspace = await prisma.workspace.findFirst({
-    where: { ownerId: user!.id },
+    where: { ownerId: user.id },
     include: {
       clients: { orderBy: { createdAt: 'desc' }, take: 5 },
       reports: {
@@ -20,7 +20,7 @@ export default async function DashboardPage() {
 
   const clientCount = workspace?.clients.length ?? 0
   const reportCount = await prisma.report.count({
-    where: { workspaceId: workspace?.id },
+    where: { workspaceId: ws.id },
   })
 
   return (

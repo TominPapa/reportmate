@@ -32,6 +32,7 @@ export default function ReportDetailClient({ report }: { report: Report }) {
   async function handleDownloadPDF() {
     setDownloading(true)
     try {
+      const pdf = (metrics as Record<string, unknown>)._pdf as Record<string, unknown> | undefined
       const res = await fetch('/api/pdf', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -39,16 +40,23 @@ export default function ReportDetailClient({ report }: { report: Report }) {
           clientName: report.client.name,
           reportMonth: report.dataset.reportMonth,
           dataType: report.dataset.dataType,
-          metrics,
+          dataSource: pdf?.dataSource ?? (report.dataset.dataType === 'ga4' ? 'Google Analytics 4' : 'Google Search Console'),
+          kpis: pdf?.kpis ?? [],
+          totalItems: pdf?.totalItems ?? 0,
+          itemLabel: pdf?.itemLabel ?? 'items',
+          gscQueries: pdf?.gscQueries,
+          ga4Pages: pdf?.ga4Pages,
+          snapshotRows: null,
+          alertType: null,
+          alertMessage: null,
           report: {
-            executive_summary: summary?.content?.text,
-            kpi_narrative: summary?.content?.kpi_narrative,
-            wins: kpi?.content?.wins,
-            concerns: kpi?.content?.concerns,
+            executive_summary: summary?.content?.text as string ?? '',
+            kpi_narrative: summary?.content?.kpi_narrative as string ?? '',
+            wins: (kpi?.content?.wins as string[]) ?? [],
+            concerns: (kpi?.content?.concerns as string[]) ?? [],
             opportunities: (opportunities?.content?.opportunities as string[]) ?? [],
             next_actions: (actions?.content?.next_actions as string[]) ?? [],
-            top_query_insight: kpi?.content?.top_query_insight,
-            opportunity_insight: opportunities?.content?.opportunity_insight,
+            opportunity_insight: opportunities?.content?.opportunity_insight as string ?? '',
           },
         }),
       })
