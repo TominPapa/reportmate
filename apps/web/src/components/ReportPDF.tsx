@@ -1,6 +1,15 @@
 import { Document, Page, View, Text, Image, StyleSheet, Font } from '@react-pdf/renderer';
 
-Font.register({ family: 'Helvetica', fonts: [] });
+// NotoSansKR: covers both Korean (Hangul) and Latin characters in one file
+// Using Google Fonts early-access CDN which provides woff format (supported by @react-pdf/renderer v4)
+Font.register({
+  family: 'NotoSansKR',
+  src: 'https://fonts.gstatic.com/ea/notosanskr/v2/NotoSansKR-Regular.woff',
+});
+Font.register({
+  family: 'NotoSansKR-Bold',
+  src: 'https://fonts.gstatic.com/ea/notosanskr/v2/NotoSansKR-Bold.woff',
+});
 
 const DARK = '#0f172a';
 const DARK2 = '#1e293b';
@@ -14,8 +23,8 @@ const BORDER = '#e2e8f0';
 
 const s = StyleSheet.create({
   // ── Pages ──────────────────────────────────────────────
-  coverPage:   { fontFamily: 'Helvetica', backgroundColor: DARK, paddingBottom: 50 },
-  contentPage: { fontFamily: 'Helvetica', backgroundColor: '#ffffff', paddingBottom: 50 },
+  coverPage:   { fontFamily: 'NotoSansKR', backgroundColor: DARK, paddingBottom: 50 },
+  contentPage: { fontFamily: 'NotoSansKR', backgroundColor: '#ffffff', paddingBottom: 50 },
 
   // ── Cover ──────────────────────────────────────────────
   coverTopBar: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', paddingHorizontal: 40, paddingTop: 36, marginBottom: 60 },
@@ -26,7 +35,7 @@ const s = StyleSheet.create({
   coverPill: { borderWidth: 1, borderColor: '#334155', borderRadius: 20, paddingHorizontal: 12, paddingVertical: 4, alignSelf: 'flex-start', marginBottom: 20 },
   coverPillText: { color: '#94a3b8', fontSize: 7.5, letterSpacing: 1.5, textTransform: 'uppercase' },
   coverReportType: { color: '#cbd5e1', fontSize: 13, marginBottom: 8 },
-  coverClientName: { color: '#ffffff', fontSize: 34, fontFamily: 'Helvetica-Bold', marginBottom: 6, lineHeight: 1.2 },
+  coverClientName: { color: '#ffffff', fontSize: 34, fontFamily: 'NotoSansKR-Bold', marginBottom: 6, lineHeight: 1.2 },
   coverMeta: { color: '#64748b', fontSize: 9.5, marginBottom: 28 },
 
   // Alert boxes
@@ -42,13 +51,13 @@ const s = StyleSheet.create({
   coverKpiRow: { flexDirection: 'row', gap: 8, marginTop: 8 },
   coverKpiBox: { flex: 1, backgroundColor: DARK2, borderRadius: 8, padding: 14, borderWidth: 1, borderColor: '#1e293b' },
   coverKpiLabel: { color: '#64748b', fontSize: 7, textTransform: 'uppercase', letterSpacing: 0.8, marginBottom: 5 },
-  coverKpiValue: { color: '#ffffff', fontSize: 18, fontFamily: 'Helvetica-Bold', marginBottom: 3 },
+  coverKpiValue: { color: '#ffffff', fontSize: 18, fontFamily: 'NotoSansKR-Bold', marginBottom: 3 },
   coverKpiMom: { fontSize: 7.5, marginTop: 1 },
 
   // ── Section header (content pages) ─────────────────────
   pageHeader: { paddingHorizontal: 40, paddingTop: 32, paddingBottom: 0 },
-  sectionTag: { color: BLUE, fontSize: 8, letterSpacing: 1.5, textTransform: 'uppercase', fontFamily: 'Helvetica-Bold', marginBottom: 6 },
-  pageTitle: { color: '#0f172a', fontSize: 22, fontFamily: 'Helvetica-Bold', marginBottom: 4 },
+  sectionTag: { color: BLUE, fontSize: 8, letterSpacing: 1.5, textTransform: 'uppercase', fontFamily: 'NotoSansKR-Bold', marginBottom: 6 },
+  pageTitle: { color: '#0f172a', fontSize: 22, fontFamily: 'NotoSansKR-Bold', marginBottom: 4 },
   pageSubtitle: { color: GRAY, fontSize: 9, marginBottom: 20 },
   divider: { borderTopWidth: 1, borderTopColor: BORDER, marginVertical: 16 },
 
@@ -56,9 +65,9 @@ const s = StyleSheet.create({
   kpiRow: { flexDirection: 'row', gap: 10, paddingHorizontal: 40, marginTop: 20 },
   kpiCard: { flex: 1, borderWidth: 1, borderColor: BORDER, borderRadius: 8, padding: 20 },
   kpiCardLabel: { color: GRAY, fontSize: 7.5, textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 5 },
-  kpiCardValueBlue:  { color: BLUE,  fontSize: 24, fontFamily: 'Helvetica-Bold' },
-  kpiCardValueGreen: { color: GREEN, fontSize: 24, fontFamily: 'Helvetica-Bold' },
-  kpiCardValueDark:  { color: DARK,  fontSize: 24, fontFamily: 'Helvetica-Bold' },
+  kpiCardValueBlue:  { color: BLUE,  fontSize: 24, fontFamily: 'NotoSansKR-Bold' },
+  kpiCardValueGreen: { color: GREEN, fontSize: 24, fontFamily: 'NotoSansKR-Bold' },
+  kpiCardValueDark:  { color: DARK,  fontSize: 24, fontFamily: 'NotoSansKR-Bold' },
   kpiMomPositive: { color: GREEN, fontSize: 7.5, marginTop: 3 },
   kpiMomNegative: { color: RED,   fontSize: 7.5, marginTop: 3 },
   kpiMomStable:   { color: GRAY,  fontSize: 7.5, marginTop: 3 },
@@ -73,19 +82,19 @@ const s = StyleSheet.create({
   tableHeaderRow: { flexDirection: 'row', backgroundColor: DARK, paddingVertical: 7, paddingHorizontal: 10, borderRadius: 4, marginBottom: 1 },
   tableRow:    { flexDirection: 'row', paddingVertical: 10, paddingHorizontal: 10, borderBottomWidth: 1, borderBottomColor: '#f1f5f9' },
   tableRowAlt: { flexDirection: 'row', paddingVertical: 10, paddingHorizontal: 10, backgroundColor: LIGHT, borderBottomWidth: 1, borderBottomColor: '#f1f5f9' },
-  tableHeaderText: { fontSize: 7, fontFamily: 'Helvetica-Bold', color: '#94a3b8', textTransform: 'uppercase', letterSpacing: 0.5 },
+  tableHeaderText: { fontSize: 7, fontFamily: 'NotoSansKR-Bold', color: '#94a3b8', textTransform: 'uppercase', letterSpacing: 0.5 },
   tableCellText: { fontSize: 8.5, color: '#334155' },
   tableCellMuted: { fontSize: 8.5, color: GRAY },
-  tableCellPositive: { fontSize: 8.5, color: GREEN, fontFamily: 'Helvetica-Bold' },
-  tableCellNegative: { fontSize: 8.5, color: RED,   fontFamily: 'Helvetica-Bold' },
+  tableCellPositive: { fontSize: 8.5, color: GREEN, fontFamily: 'NotoSansKR-Bold' },
+  tableCellNegative: { fontSize: 8.5, color: RED,   fontFamily: 'NotoSansKR-Bold' },
   badgePositive: { backgroundColor: '#dcfce7', borderRadius: 10, paddingHorizontal: 6, paddingVertical: 2, alignSelf: 'flex-start' },
   badgeWarning:  { backgroundColor: '#fef9c3', borderRadius: 10, paddingHorizontal: 6, paddingVertical: 2, alignSelf: 'flex-start' },
   badgeNegative: { backgroundColor: '#fee2e2', borderRadius: 10, paddingHorizontal: 6, paddingVertical: 2, alignSelf: 'flex-start' },
   badgeStable:   { backgroundColor: '#f1f5f9', borderRadius: 10, paddingHorizontal: 6, paddingVertical: 2, alignSelf: 'flex-start' },
-  badgeTextPositive: { fontSize: 7, color: '#15803d', fontFamily: 'Helvetica-Bold' },
-  badgeTextWarning:  { fontSize: 7, color: '#92400e', fontFamily: 'Helvetica-Bold' },
-  badgeTextNegative: { fontSize: 7, color: '#b91c1c', fontFamily: 'Helvetica-Bold' },
-  badgeTextStable:   { fontSize: 7, color: '#475569', fontFamily: 'Helvetica-Bold' },
+  badgeTextPositive: { fontSize: 7, color: '#15803d', fontFamily: 'NotoSansKR-Bold' },
+  badgeTextWarning:  { fontSize: 7, color: '#92400e', fontFamily: 'NotoSansKR-Bold' },
+  badgeTextNegative: { fontSize: 7, color: '#b91c1c', fontFamily: 'NotoSansKR-Bold' },
+  badgeTextStable:   { fontSize: 7, color: '#475569', fontFamily: 'NotoSansKR-Bold' },
 
   // ── Wins & Concerns ─────────────────────────────────────
   twoCol: { flexDirection: 'row', gap: 12, paddingHorizontal: 40, marginTop: 4 },
@@ -93,8 +102,8 @@ const s = StyleSheet.create({
   concernsBox: { flex: 1, backgroundColor: '#fff1f2', borderRadius: 10, padding: 16, borderWidth: 1, borderColor: '#fecdd3' },
   winsHeader: { flexDirection: 'row', alignItems: 'center', marginBottom: 12 },
   concernsHeader: { flexDirection: 'row', alignItems: 'center', marginBottom: 12 },
-  winsTitle: { fontSize: 8, color: '#15803d', letterSpacing: 1.5, textTransform: 'uppercase', fontFamily: 'Helvetica-Bold' },
-  concernsTitle: { fontSize: 8, color: '#b91c1c', letterSpacing: 1.5, textTransform: 'uppercase', fontFamily: 'Helvetica-Bold' },
+  winsTitle: { fontSize: 8, color: '#15803d', letterSpacing: 1.5, textTransform: 'uppercase', fontFamily: 'NotoSansKR-Bold' },
+  concernsTitle: { fontSize: 8, color: '#b91c1c', letterSpacing: 1.5, textTransform: 'uppercase', fontFamily: 'NotoSansKR-Bold' },
   listItem: { flexDirection: 'row', marginBottom: 8, gap: 6 },
   listBulletGreen: { fontSize: 9, color: GREEN, marginTop: 1, width: 10 },
   listBulletRed:   { fontSize: 9, color: RED,   marginTop: 1, width: 10 },
@@ -108,23 +117,23 @@ const s = StyleSheet.create({
   // ── Action items ────────────────────────────────────────
   actionItem: { flexDirection: 'row', gap: 12, marginBottom: 14, alignItems: 'flex-start' },
   actionNum: { width: 22, height: 22, backgroundColor: BLUE, borderRadius: 11, alignItems: 'center', justifyContent: 'center' },
-  actionNumText: { color: '#fff', fontSize: 9, fontFamily: 'Helvetica-Bold' },
+  actionNumText: { color: '#fff', fontSize: 9, fontFamily: 'NotoSansKR-Bold' },
   actionContent: { flex: 1 },
   actionTitleRow: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 3 },
-  actionTitle: { fontSize: 10, color: '#0f172a', fontFamily: 'Helvetica-Bold', flex: 1 },
+  actionTitle: { fontSize: 10, color: '#0f172a', fontFamily: 'NotoSansKR-Bold', flex: 1 },
   priorityHigh:   { backgroundColor: '#fee2e2', borderRadius: 8, paddingHorizontal: 6, paddingVertical: 2 },
   priorityMed:    { backgroundColor: '#fef9c3', borderRadius: 8, paddingHorizontal: 6, paddingVertical: 2 },
   priorityLow:    { backgroundColor: '#f1f5f9', borderRadius: 8, paddingHorizontal: 6, paddingVertical: 2 },
-  priorityHighText: { fontSize: 6.5, color: '#b91c1c', fontFamily: 'Helvetica-Bold' },
-  priorityMedText:  { fontSize: 6.5, color: '#92400e', fontFamily: 'Helvetica-Bold' },
-  priorityLowText:  { fontSize: 6.5, color: '#475569', fontFamily: 'Helvetica-Bold' },
+  priorityHighText: { fontSize: 6.5, color: '#b91c1c', fontFamily: 'NotoSansKR-Bold' },
+  priorityMedText:  { fontSize: 6.5, color: '#92400e', fontFamily: 'NotoSansKR-Bold' },
+  priorityLowText:  { fontSize: 6.5, color: '#475569', fontFamily: 'NotoSansKR-Bold' },
   actionDesc: { fontSize: 8.5, color: GRAY, lineHeight: 1.5 },
 
   // ── Bar chart ───────────────────────────────────────────
   chartArea: { paddingHorizontal: 40, marginTop: 4 },
   chartBars: { flexDirection: 'row', alignItems: 'flex-end', height: 220, gap: 6 },
   chartBarWrapper: { flex: 1, alignItems: 'center', justifyContent: 'flex-end', height: 220 },
-  chartBarValue: { fontSize: 8, fontFamily: 'Helvetica-Bold', marginBottom: 4 },
+  chartBarValue: { fontSize: 8, fontFamily: 'NotoSansKR-Bold', marginBottom: 4 },
   chartBarLabel: { fontSize: 7, color: GRAY, marginTop: 6, textAlign: 'center' },
 
   // ── Data table ──────────────────────────────────────────
@@ -133,25 +142,25 @@ const s = StyleSheet.create({
   dataTableRowAlt: { flexDirection: 'row', paddingVertical: 7, paddingHorizontal: 10, backgroundColor: LIGHT, borderBottomWidth: 1, borderBottomColor: '#f1f5f9' },
 
   // ── Position styles ─────────────────────────────────────
-  posGreen:  { fontSize: 8.5, color: GREEN, fontFamily: 'Helvetica-Bold' },
-  posYellow: { fontSize: 8.5, color: AMBER, fontFamily: 'Helvetica-Bold' },
-  posRed:    { fontSize: 8.5, color: RED,   fontFamily: 'Helvetica-Bold' },
+  posGreen:  { fontSize: 8.5, color: GREEN, fontFamily: 'NotoSansKR-Bold' },
+  posYellow: { fontSize: 8.5, color: AMBER, fontFamily: 'NotoSansKR-Bold' },
+  posRed:    { fontSize: 8.5, color: RED,   fontFamily: 'NotoSansKR-Bold' },
 
   // ── Cover contents (bottom of cover page) ───────────────
   coverSpacer: { flex: 1 },
   coverContents: { paddingHorizontal: 40, paddingBottom: 70 },
-  coverContentsLabel: { fontSize: 7, color: '#334155', letterSpacing: 1.5, textTransform: 'uppercase', marginBottom: 14, fontFamily: 'Helvetica-Bold' },
+  coverContentsLabel: { fontSize: 7, color: '#334155', letterSpacing: 1.5, textTransform: 'uppercase', marginBottom: 14, fontFamily: 'NotoSansKR-Bold' },
   coverContentsRow: { flexDirection: 'row', gap: 10 },
   coverContentsCard: { flex: 1, borderTopWidth: 1, borderTopColor: '#334155', paddingTop: 10 },
   coverContentsCardNum: { fontSize: 7, color: '#475569', marginBottom: 4 },
-  coverContentsCardTitle: { fontSize: 9, color: '#94a3b8', fontFamily: 'Helvetica-Bold' },
+  coverContentsCardTitle: { fontSize: 9, color: '#94a3b8', fontFamily: 'NotoSansKR-Bold' },
 
   // ── Footer ──────────────────────────────────────────────
   footer: { position: 'absolute', bottom: 20, left: 40, right: 40, flexDirection: 'row', justifyContent: 'space-between', borderTopWidth: 1, borderTopColor: '#1e293b', paddingTop: 8 },
   footerCover: { position: 'absolute', bottom: 20, left: 40, right: 40, flexDirection: 'row', justifyContent: 'space-between', borderTopWidth: 1, borderTopColor: '#1e293b', paddingTop: 8 },
   footerText: { fontSize: 7.5, color: '#475569' },
   footerTextCover: { fontSize: 7.5, color: '#334155' },
-  sectionLabel: { fontSize: 8, color: GRAY, letterSpacing: 1.5, textTransform: 'uppercase', marginBottom: 8, fontFamily: 'Helvetica-Bold' },
+  sectionLabel: { fontSize: 8, color: GRAY, letterSpacing: 1.5, textTransform: 'uppercase', marginBottom: 8, fontFamily: 'NotoSansKR-Bold' },
   footnote: { fontSize: 7.5, color: '#94a3b8', marginTop: 10, paddingHorizontal: 40 },
 });
 
@@ -298,16 +307,16 @@ export function ReportPDF({ data }: { data: PDFReportData }) {
           <View style={{ flexDirection: 'row', gap: 32, marginTop: 20 }}>
             <View>
               <Text style={{ color: '#64748b', fontSize: 7, letterSpacing: 0.5, marginBottom: 4 }}>Data Source</Text>
-              <Text style={{ color: '#94a3b8', fontSize: 9, fontFamily: 'Helvetica-Bold' }}>{dataSource}</Text>
+              <Text style={{ color: '#94a3b8', fontSize: 9, fontFamily: 'NotoSansKR-Bold' }}>{dataSource}</Text>
             </View>
             <View>
               <Text style={{ color: '#64748b', fontSize: 7, letterSpacing: 0.5, marginBottom: 4 }}>Reporting Period</Text>
-              <Text style={{ color: '#94a3b8', fontSize: 9, fontFamily: 'Helvetica-Bold' }}>{reportMonth}</Text>
+              <Text style={{ color: '#94a3b8', fontSize: 9, fontFamily: 'NotoSansKR-Bold' }}>{reportMonth}</Text>
             </View>
             {previousMonth && (
               <View>
                 <Text style={{ color: '#64748b', fontSize: 7, letterSpacing: 0.5, marginBottom: 4 }}>Compared To</Text>
-                <Text style={{ color: '#94a3b8', fontSize: 9, fontFamily: 'Helvetica-Bold' }}>{previousMonth}</Text>
+                <Text style={{ color: '#94a3b8', fontSize: 9, fontFamily: 'NotoSansKR-Bold' }}>{previousMonth}</Text>
               </View>
             )}
           </View>
@@ -397,7 +406,7 @@ export function ReportPDF({ data }: { data: PDFReportData }) {
               ].map((stat, i) => (
                 <View key={i} style={{ flex: 1, backgroundColor: LIGHT, borderRadius: 8, padding: 26, borderWidth: 1, borderColor: BORDER }}>
                   <Text style={{ fontSize: 7.5, color: GRAY, textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 10 }}>{stat.label}</Text>
-                  <Text style={{ fontSize: 12, color: DARK, fontFamily: 'Helvetica-Bold', marginBottom: 6 }}>{stat.value}</Text>
+                  <Text style={{ fontSize: 12, color: DARK, fontFamily: 'NotoSansKR-Bold', marginBottom: 6 }}>{stat.value}</Text>
                   <Text style={{ fontSize: 8.5, color: GRAY }}>{stat.sub}</Text>
                 </View>
               ))}
@@ -460,7 +469,7 @@ export function ReportPDF({ data }: { data: PDFReportData }) {
                       borderColor: isPos ? '#bbf7d0' : isNeg ? '#fecdd3' : BORDER,
                     }}>
                       <Text style={{ fontSize: 8, color: GRAY, textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 16 }}>{row.metric}</Text>
-                      <Text style={{ fontSize: 48, fontFamily: 'Helvetica-Bold', color: row.isGoodChange ? GREEN : RED, marginBottom: 12 }}>{row.changeLabel}</Text>
+                      <Text style={{ fontSize: 48, fontFamily: 'NotoSansKR-Bold', color: row.isGoodChange ? GREEN : RED, marginBottom: 12 }}>{row.changeLabel}</Text>
                       <Text style={{ fontSize: 10, color: '#475569' }}>{row.previous}{'  >  '}{row.current}</Text>
                     </View>
                   );
@@ -542,7 +551,7 @@ export function ReportPDF({ data }: { data: PDFReportData }) {
                       <View style={{ flex: 1, height: 16, backgroundColor: '#f1f5f9', borderRadius: 3 }}>
                         <View style={{ width: `${pct}%`, height: 16, backgroundColor: b.color, borderRadius: 3 }} />
                       </View>
-                      <Text style={{ width: 22, fontSize: 8.5, fontFamily: 'Helvetica-Bold', color: b.color, textAlign: 'right' }}>{b.count}</Text>
+                      <Text style={{ width: 22, fontSize: 8.5, fontFamily: 'NotoSansKR-Bold', color: b.color, textAlign: 'right' }}>{b.count}</Text>
                       <Text style={{ width: 72, fontSize: 7.5, color: GRAY, textAlign: 'right' }}>{b.clicks.toLocaleString()} clicks</Text>
                     </View>
                   );

@@ -232,7 +232,7 @@ export async function POST(request: NextRequest) {
         workspaceId: workspace.id,
         clientId,
         datasetId: dataset.id,
-        title: `${clientName} - ${reportMonth} ${metrics.type.toUpperCase()} 리포트`,
+        title: `${clientName} - ${reportMonth} ${metrics.type.toUpperCase()} Report`,
         status: 'draft',
       },
     })
