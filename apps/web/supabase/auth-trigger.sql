@@ -43,12 +43,14 @@ DECLARE
   new_workspace_id UUID;
 BEGIN
   -- Create default workspace
-  INSERT INTO public.workspaces (id, name, owner_id, credits_reset_at)
+  INSERT INTO public.workspaces (id, name, owner_id, credits_reset_at, created_at, updated_at)
   VALUES (
     gen_random_uuid(),
     COALESCE(NEW.name, split_part(NEW.email, '@', 1)) || '''s Workspace',
     NEW.id,
-    NOW() + INTERVAL '1 month'
+    NOW() + INTERVAL '1 month',
+    NOW(),
+    NOW()
   )
   RETURNING id INTO new_workspace_id;
 

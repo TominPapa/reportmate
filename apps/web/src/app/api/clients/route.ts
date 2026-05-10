@@ -2,6 +2,27 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { prisma } from '@/lib/prisma'
 
+export async function GET() {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+
+  if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+
+  const workspace = await prisma.workspace.findFirst({
+    where: { ownerId: user.id },
+  })
+
+  if (!workspace) return NextResponse.json([])
+
+  const clients = await prisma.client.findMany({
+    where: { workspaceId: workspace.id },
+    select: { id: true, name: true },
+    orderBy: { createdAt: 'desc' },
+  })
+
+  return NextResponse.json(clients)
+}
+
 export async function POST(request: NextRequest) {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()

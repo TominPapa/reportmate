@@ -24,7 +24,8 @@
       "WebFetch(domain:reportr.agency)",
       "WebFetch(domain:dashthis.com)",
       "WebFetch(domain:agencyanalytics.com)",
-      "WebFetch(domain:twominutereports.com)"
+      "WebFetch(domain:twominutereports.com)",
+      "WebFetch(domain:reportmate-web.vercel.app)"
     ]
   }
 }

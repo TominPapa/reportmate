@@ -4,7 +4,7 @@
 > 프로젝트 전체 상태와 핵심 원칙을 한 곳에 정리한 인수인계 문서다.  
 > **새 세션 시작 시 반드시 이 파일을 먼저 읽는다.**
 
-최종 업데이트: 2026-04-26 (v1.2 반영)
+최종 업데이트: 2026-05-10 (MVP 앱 완성 + Vercel 배포 반영)
 
 ---
 
@@ -170,33 +170,84 @@ lib/
 
 | Phase | 내용 | 상태 |
 |-------|------|------|
-| **Phase 0** | 시장 검증 (샘플 리포트 제작 + Reddit 피드백) | ⏳ **현재 단계** |
+| **Phase 0** | 시장 검증 — MVP 데모 앱 완성 + 피드백 수집 중 | ✅ **앱 완성, 배포 완료** |
 | Phase 1 | MVP Core (인증, CSV, 매핑, KPI, AI 리포트, 편집기) | 미시작 |
 | Phase 2 | Export & Sharing (PDF, 공유 링크, 화이트라벨) | 미시작 |
 | Phase 3 | AppSumo Readiness (코드 등록, 티어 제한, 온보딩, 랜딩) | 미시작 |
 | Phase 4 | Post-launch (API 연동, 자동화, 클라이언트 포털) | 미시작 |
 
+### Phase 0 실제 구현 내용 (2026-05-10 기준)
+
+**배포된 앱:**
+- Live URL: https://reportmate-web.vercel.app
+- GitHub: https://github.com/TominPapa/reportmate
+- 인프라: Vercel (Root Directory = `apps/web`)
+
+**구현된 기능 (데모 앱 — 인증/DB 없는 프론트 전용):**
+1. GA4 또는 GSC CSV 업로드 (이번달 + 지난달 — 둘 다 드래그앤드롭 지원)
+2. CSV 헤더 자동 감지 (GA4 vs GSC 구분)
+3. MoM(전월 대비) 계산: `computeMoMGSC` / `computeMoMGA4`
+4. Claude claude-opus-4-5 API로 AI 분석 텍스트 생성 (Executive Summary, Wins, Concerns, Opportunities, Action Items)
+5. 웹 미리보기 결과 페이지 (즉시 확인 가능)
+6. `@react-pdf/renderer`로 PDF 다운로드
+
+**PDF 구성 (5페이지):**
+- Page 1 (Cover): 제목, 서비스명, Reporting Period, ReportMate 메타정보, "Inside This Report" TOC
+- Page 2: 바 차트 (Top Queries by Clicks), Quick Stats 스트립 (TOP PERFORMER / TOTAL TRACKED / REPORT PERIOD)
+- Page 3: KPI Snapshot 표 + MoM Highlight Cards 2×2
+- Page 4: Executive Summary + Wins & Concerns + Opportunities + Query Position Distribution 가로 바 차트
+- Page 5: Action Plan + Data Appendix (전체 데이터 표)
+
+**웹 미리보기 구성 (PDF와 동일):**
+- Cover 영역: pill 태그, Reporting Period
+- KPI Snapshot 표 + MoM Highlight Cards 2×2 그리드
+- Executive Summary (파란 왼쪽 테두리 내러티브 박스)
+- Wins / Concerns / Opportunities / Action Items (우선순위 배지: High/Medium/Low)
+- Query Position Distribution 가로 바 차트
+- Data Appendix 표
+
+**핵심 파일 목록:**
+
+| 파일 | 역할 |
+|------|------|
+| `apps/web/src/app/demo/page.tsx` | 데모 페이지 — CSV 업로드, AI 호출, 웹 미리보기 |
+| `apps/web/src/components/ReportPDF.tsx` | PDF 렌더러 (`@react-pdf/renderer`) |
+| `apps/web/src/app/api/generate/route.ts` | AI 생성 API route (Claude API 호출) |
+| `apps/web/vercel.json` | Vercel 설정 (`{"framework": "nextjs"}`) |
+
+**알려진 이슈:**
+- PDF Page 3 하단 약 25% 여백 남아있음 (MoM 카드 아래)
+- `→` 문자 react-pdf에서 `'`로 렌더링됨 → `{'  >  '}`(ASCII)로 우회 처리됨
+- 기술 스택 표의 PDF 항목이 "Playwright"로 명시돼 있으나 실제 구현은 `@react-pdf/renderer` 사용
+
 ---
 
-## 8. Phase 0 — 지금 해야 할 일 (개발 전 시장 검증)
+## 8. Phase 0 — 시장 검증 현황
 
-**코드를 한 줄도 쓰기 전에 반드시 완료해야 한다.**
+**앱 완성. 이제 실제 피드백 수집이 남은 핵심 과제.**
 
-### Step 1: 샘플 리포트 3개 수동 제작 (Canva 권장)
-| # | 유형 | 시나리오 |
+### Step 1: 샘플 리포트 ✅ 완료
+Canva 수동 제작 불필요 — 실제 앱이 CSV에서 자동 생성함.  
+test CSV로 다음 3종 시나리오 PDF 생성 가능:
+| # | 유형 | 생성 방법 |
 |---|------|---------|
-| 1 | SEO 성과 상승 리포트 | 트래픽 +18%, 전환 +12% |
-| 2 | SEO 성과 하락 리포트 | 트래픽 -22%, 원인 설명 포함 |
-| 3 | PPC 성과 애매한 리포트 | ROAS 유지, CPC 상승 |
+| 1 | SEO 성과 상승 | 트래픽 +18%, 전환 +12% 수치의 GSC/GA4 CSV 사용 |
+| 2 | SEO 성과 하락 | 트래픽 -22% CSV → AI가 원인 분석 포함 |
+| 3 | PPC 성과 애매 | ROAS 유지, CPC 상승 시나리오 |
 
-필수 구성: Cover / Executive Summary / KPI Snapshot / Wins / Concerns / Next Actions
+### Step 2: 피드백 수집 채널 ⏳ 미완
+**Reddit 계정 차단됨** — r/SEO, r/PPC, r/agency 포스팅 불가.
 
-### Step 2: Reddit 포스팅
-대상: r/SEO, r/PPC, r/agency, r/freelance  
-제목: "I made a sample AI-generated SEO report for agencies — would you actually send this to a client?"  
-핵심: 광고 아닌 피드백 요청 형태로 작성
+대안 채널 (우선순위 순):
+| 채널 | 접근법 | 예상 반응 |
+|------|--------|---------|
+| **Indie Hackers** | Show IH 포스트: "Built an AI report generator for agencies" | 개발자+SaaS 구매자 mix |
+| **Hacker News** | Show HN 포스트 | 높은 노출, 비판적 피드백 |
+| **Facebook Groups** | Digital Marketing Agency owners 그룹 | 실제 에이전시 타깃 |
+| **LinkedIn** | 마케터 대상 게시물 + 직접 DM | B2B 타깃 가장 적합 |
+| **Product Hunt** | Coming Soon 페이지 등록 | 얼리어답터 수집 |
 
-### Step 3: 통과 기준 확인
+### Step 3: 통과 기준
 | 항목 | 통과 기준 |
 |------|---------|
 | 샘플 리포트 반응 | 5명 중 3명 "보낼 수 있다" |
@@ -223,13 +274,15 @@ lib/
 
 ## 10. 미결 사항
 
-| 항목 | 상태 |
-|------|------|
-| Phase 0 샘플 리포트 제작 | ⏳ 진행 필요 |
-| Reddit 피드백 수집 | ⏳ Phase 0 완료 후 |
-| Prisma 스키마 초안 | ⏳ Phase 1 착수 시 |
-| AI 프롬프트 실측 튜닝 | ⏳ Phase 1 착수 시 |
-| AppSumo 판매 페이지 초안 | ⏳ Phase 3 |
+| 항목 | 상태 | 우선순위 |
+|------|------|---------|
+| 피드백 수집 채널 결정 (Reddit 차단) | ⏳ 즉시 필요 | 🔴 HIGH |
+| PDF Page 3 하단 여백 (~25%) 제거 | ⏳ 다음 세션 | 🟡 MEDIUM |
+| Phase 0 통과 기준 달성 후 Phase 1 착수 결정 | ⏳ 피드백 후 | 🟡 MEDIUM |
+| 기술 스택 문서 PDF 항목 수정 (Playwright → @react-pdf/renderer) | ⏳ 낮은 우선순위 | 🟢 LOW |
+| Prisma 스키마 초안 | ⏳ Phase 1 착수 시 | 🟢 LOW |
+| AI 프롬프트 실측 튜닝 | ⏳ Phase 1 착수 시 | 🟢 LOW |
+| AppSumo 판매 페이지 초안 | ⏳ Phase 3 | 🟢 LOW |
 
 ---
 
