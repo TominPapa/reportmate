@@ -11,10 +11,15 @@ export async function POST(req: NextRequest) {
     const element: AnyReactElement = React.createElement(ReportPDF, { data });
     const buffer = await renderToBuffer(element);
 
+    // HTTP headers must be ASCII. Use RFC 5987 encoding for non-ASCII (Korean) filenames.
+    const rawFilename = `${data.clientName.replace(/\s+/g, '_')}_Report_${data.reportMonth.replace(/\s+/g, '_')}.pdf`;
+    const asciiFilename = rawFilename.replace(/[^\x20-\x7E]/g, '_'); // fallback for old browsers
+    const encodedFilename = encodeURIComponent(rawFilename);         // RFC 5987
+
     return new NextResponse(new Uint8Array(buffer), {
       headers: {
         'Content-Type': 'application/pdf',
-        'Content-Disposition': `attachment; filename="${data.clientName.replace(/\s+/g, '_')}_Report_${data.reportMonth.replace(/\s+/g, '_')}.pdf"`,
+        'Content-Disposition': `attachment; filename="${asciiFilename}"; filename*=UTF-8''${encodedFilename}`,
       },
     });
   } catch (error) {
