@@ -1,14 +1,14 @@
 import { Document, Page, View, Text, Image, StyleSheet, Font } from '@react-pdf/renderer';
 
-// NotoSansKR: covers both Korean (Hangul) and Latin characters in one file
-// Using Google Fonts early-access CDN which provides woff format (supported by @react-pdf/renderer v4)
+// NotoSansKR: covers both Korean (Hangul) and Latin characters in one TTF file
+// Source: official Google Fonts GitHub repository (raw content)
 Font.register({
   family: 'NotoSansKR',
-  src: 'https://fonts.gstatic.com/ea/notosanskr/v2/NotoSansKR-Regular.woff',
+  src: 'https://raw.githubusercontent.com/google/fonts/main/ofl/notosanskr/static/NotoSansKR-Regular.ttf',
 });
 Font.register({
   family: 'NotoSansKR-Bold',
-  src: 'https://fonts.gstatic.com/ea/notosanskr/v2/NotoSansKR-Bold.woff',
+  src: 'https://raw.githubusercontent.com/google/fonts/main/ofl/notosanskr/static/NotoSansKR-Bold.ttf',
 });
 
 const DARK = '#0f172a';
