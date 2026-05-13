@@ -1,14 +1,14 @@
 import { Document, Page, View, Text, Image, StyleSheet, Font } from '@react-pdf/renderer';
 
 // NanumGothic: covers both Korean (Hangul) and Latin characters in one TTF file
-// Source: jsDelivr CDN serving google/fonts GitHub repo — verified working
+// Source: fonts.gstatic.com (Google Fonts static CDN) — verified accessible from server-side
 Font.register({
   family: 'NotoSansKR',
-  src: 'https://cdn.jsdelivr.net/gh/google/fonts@main/ofl/nanumgothic/NanumGothic-Regular.ttf',
+  src: 'https://fonts.gstatic.com/s/nanumgothic/v26/PN_3Rfi-oW3hYwmKDpxS7F_z_g.ttf',
 });
 Font.register({
   family: 'NotoSansKR-Bold',
-  src: 'https://cdn.jsdelivr.net/gh/google/fonts@main/ofl/nanumgothic/NanumGothic-Bold.ttf',
+  src: 'https://fonts.gstatic.com/s/nanumgothic/v26/PN_oRfi-oW3hYwmKDpxS7F_LQv37zg.ttf',
 });
 
 const DARK = '#0f172a';
