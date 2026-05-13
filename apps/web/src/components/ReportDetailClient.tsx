@@ -20,13 +20,23 @@ interface Report {
   blocks: Block[]
 }
 
+const BLOCKS = [
+  { type: 'executive_summary', label: 'Executive Summary', desc: '전체 요약 + KPI 내러티브' },
+  { type: 'kpi_snapshot',      label: 'Wins & Concerns',   desc: '이번 달 성과 + 주의 사항' },
+  { type: 'opportunities',     label: 'Opportunities',     desc: '기회 요인 + 인사이트' },
+  { type: 'action_plan',       label: 'Action Plan',       desc: '다음 달 액션 플랜' },
+]
+
 export default function ReportDetailClient({ report }: { report: Report }) {
-  const [pdfUrl, setPdfUrl]       = useState<string | null>(null)
-  const [loading, setLoading]     = useState(true)
-  const [error, setError]         = useState<string | null>(null)
-  const [shareUrl, setShareUrl]   = useState<string | null>(null)
-  const [sharing, setSharing]     = useState(false)
-  const [copied, setCopied]       = useState(false)
+  const [pdfUrl, setPdfUrl]           = useState<string | null>(null)
+  const [loading, setLoading]         = useState(true)
+  const [error, setError]             = useState<string | null>(null)
+  const [shareUrl, setShareUrl]       = useState<string | null>(null)
+  const [sharing, setSharing]         = useState(false)
+  const [copied, setCopied]           = useState(false)
+  const [regenLoading, setRegenLoading] = useState<string | null>(null)  // blockType
+  const [regenDone, setRegenDone]     = useState<string | null>(null)
+  const [showRegen, setShowRegen]     = useState(false)
   const blobUrlRef = useRef<string | null>(null)
 
   useEffect(() => {
@@ -118,6 +128,34 @@ export default function ReportDetailClient({ report }: { report: Report }) {
     }
   }
 
+  async function handleRegen(blockType: string) {
+    setRegenLoading(blockType)
+    setRegenDone(null)
+    try {
+      const res = await fetch(`/api/reports/${report.id}/regenerate-block`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ blockType }),
+      })
+      const data = await res.json()
+      if (!res.ok) {
+        alert(data.error ?? '재생성 실패')
+        return
+      }
+      setRegenDone(blockType)
+      setTimeout(() => setRegenDone(null), 3000)
+      // Update the block content in report object so re-generated PDF reflects new content
+      const block = report.blocks.find(b => b.blockType === blockType)
+      if (block) block.content = data.content
+      // Re-generate PDF with updated content
+      await generatePDF()
+    } catch {
+      alert('재생성 중 오류가 발생했습니다.')
+    } finally {
+      setRegenLoading(null)
+    }
+  }
+
   return (
     <div className="flex flex-col gap-4" style={{ height: 'calc(100vh - 160px)', minHeight: '600px' }}>
 
@@ -192,6 +230,44 @@ export default function ReportDetailClient({ report }: { report: Report }) {
             className="w-full h-full"
             title={report.title}
           />
+        )}
+      </div>
+
+      {/* 블록 재생성 패널 */}
+      <div className="shrink-0 border border-gray-200 rounded-xl bg-white overflow-hidden">
+        <button
+          onClick={() => setShowRegen(v => !v)}
+          className="w-full flex items-center justify-between px-5 py-3 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+        >
+          <span>✏️ 블록 단위 재생성</span>
+          <span className="text-gray-400 text-xs">{showRegen ? '▲ 접기' : '▼ 펼치기'}</span>
+        </button>
+
+        {showRegen && (
+          <div className="border-t border-gray-100 px-5 py-4 grid grid-cols-2 sm:grid-cols-4 gap-3">
+            {BLOCKS.map(block => {
+              const isLoading = regenLoading === block.type
+              const isDone    = regenDone    === block.type
+              return (
+                <button
+                  key={block.type}
+                  onClick={() => handleRegen(block.type)}
+                  disabled={!!regenLoading}
+                  className={`flex flex-col gap-1 p-3 rounded-lg border text-left transition-all disabled:opacity-60
+                    ${isDone
+                      ? 'border-green-300 bg-green-50'
+                      : 'border-gray-200 hover:border-blue-300 hover:bg-blue-50'
+                    }`}
+                >
+                  <span className="text-xs font-semibold text-gray-800">
+                    {isLoading ? '⏳ 생성 중...' : isDone ? '✅ 완료!' : block.label}
+                  </span>
+                  <span className="text-xs text-gray-400">{block.desc}</span>
+                  <span className="text-xs text-blue-500 font-medium mt-1">5 크레딧</span>
+                </button>
+              )
+            })}
+          </div>
         )}
       </div>
     </div>

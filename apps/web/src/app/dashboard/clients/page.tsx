@@ -1,6 +1,7 @@
 import { prisma } from '@/lib/prisma'
 import { getWorkspace } from '@/lib/get-workspace'
 import Link from 'next/link'
+import DeleteButton from '@/components/DeleteButton'
 
 export default async function ClientsPage() {
   const ctx = await getWorkspace()
@@ -46,28 +47,32 @@ export default async function ClientsPage() {
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {clients.map((client) => (
-            <Link
-              key={client.id}
-              href={`/dashboard/clients/${client.id}`}
-              className="bg-white rounded-xl border border-gray-200 p-6 hover:shadow-sm hover:border-blue-200 transition-all"
-            >
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
-                  <span className="text-blue-700 font-bold text-sm">
-                    {client.name.charAt(0).toUpperCase()}
-                  </span>
+            <div key={client.id} className="relative group bg-white rounded-xl border border-gray-200 hover:shadow-sm hover:border-blue-200 transition-all">
+              <Link href={`/dashboard/clients/${client.id}`} className="block p-6">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                    <span className="text-blue-700 font-bold text-sm">
+                      {client.name.charAt(0).toUpperCase()}
+                    </span>
+                  </div>
+                  <div>
+                    <p className="font-semibold text-gray-900">{client.name}</p>
+                    {client.website && (
+                      <p className="text-xs text-gray-400 truncate">{client.website}</p>
+                    )}
+                  </div>
                 </div>
-                <div>
-                  <p className="font-semibold text-gray-900">{client.name}</p>
-                  {client.website && (
-                    <p className="text-xs text-gray-400 truncate">{client.website}</p>
-                  )}
-                </div>
+                <p className="text-xs text-gray-400">
+                  {new Date(client.createdAt).toLocaleDateString('ko-KR')} 등록
+                </p>
+              </Link>
+              <div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity">
+                <DeleteButton
+                  apiPath={`/api/clients/${client.id}`}
+                  redirectTo="/dashboard/clients"
+                />
               </div>
-              <p className="text-xs text-gray-400">
-                {new Date(client.createdAt).toLocaleDateString('ko-KR')} 등록
-              </p>
-            </Link>
+            </div>
           ))}
         </div>
       )}
