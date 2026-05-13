@@ -44,6 +44,7 @@ model Workspace {
   datasets      Dataset[]
   reports       Report[]
   usageLedger   UsageLedger[]
+  sharedLinks   SharedLink[]
 
   @@map("workspaces")
 }
@@ -128,11 +129,12 @@ model Report {
   createdAt   DateTime @default(now()) @map("created_at")
   updatedAt   DateTime @updatedAt @map("updated_at")
 
-  workspace   Workspace     @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
-  client      Client        @relation(fields: [clientId], references: [id], onDelete: Cascade)
-  dataset     Dataset       @relation(fields: [datasetId], references: [id], onDelete: Cascade)
-  blocks      ReportBlock[]
-  usageLedger UsageLedger[]
+  workspace    Workspace     @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  client       Client        @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  dataset      Dataset       @relation(fields: [datasetId], references: [id], onDelete: Cascade)
+  blocks       ReportBlock[]
+  usageLedger  UsageLedger[]
+  sharedLinks  SharedLink[]
 
   @@map("reports")
 }
@@ -149,6 +151,21 @@ model ReportBlock {
   report Report @relation(fields: [reportId], references: [id], onDelete: Cascade)
 
   @@map("report_blocks")
+}
+
+// ── Shared Links ─────────────────────────────────────────────────────────────
+model SharedLink {
+  id          String   @id @default(uuid()) @db.Uuid
+  token       String   @unique @default(uuid())
+  reportId    String   @map("report_id") @db.Uuid
+  workspaceId String   @map("workspace_id") @db.Uuid
+  isActive    Boolean  @default(true) @map("is_active")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  report    Report    @relation(fields: [reportId], references: [id], onDelete: Cascade)
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@map("shared_links")
 }
 
 // ── Usage & Credits ──────────────────────────────────────────────────────────

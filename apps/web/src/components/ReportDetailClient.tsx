@@ -21,9 +21,12 @@ interface Report {
 }
 
 export default function ReportDetailClient({ report }: { report: Report }) {
-  const [pdfUrl, setPdfUrl] = useState<string | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
+  const [pdfUrl, setPdfUrl]       = useState<string | null>(null)
+  const [loading, setLoading]     = useState(true)
+  const [error, setError]         = useState<string | null>(null)
+  const [shareUrl, setShareUrl]   = useState<string | null>(null)
+  const [sharing, setSharing]     = useState(false)
+  const [copied, setCopied]       = useState(false)
   const blobUrlRef = useRef<string | null>(null)
 
   useEffect(() => {
@@ -98,6 +101,23 @@ export default function ReportDetailClient({ report }: { report: Report }) {
     a.click()
   }
 
+  async function handleShare() {
+    setSharing(true)
+    try {
+      const res = await fetch(`/api/reports/${report.id}/share`, { method: 'POST' })
+      const { token } = await res.json()
+      const url = `${window.location.origin}/share/${token}`
+      setShareUrl(url)
+      await navigator.clipboard.writeText(url)
+      setCopied(true)
+      setTimeout(() => setCopied(false), 3000)
+    } catch {
+      alert('공유 링크 생성에 실패했습니다.')
+    } finally {
+      setSharing(false)
+    }
+  }
+
   return (
     <div className="flex flex-col gap-4" style={{ height: 'calc(100vh - 160px)', minHeight: '600px' }}>
 
@@ -112,13 +132,36 @@ export default function ReportDetailClient({ report }: { report: Report }) {
             {report.client.name} · {report.dataset.dataType.toUpperCase()} · {new Date(report.createdAt).toLocaleDateString('ko-KR')}
           </p>
         </div>
-        <button
-          onClick={handleDownload}
-          disabled={!pdfUrl || loading}
-          className="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 disabled:opacity-50 transition-colors"
-        >
-          {loading ? 'PDF 생성 중...' : '⬇ PDF 다운로드'}
-        </button>
+        <div className="flex items-center gap-2">
+          {/* 공유 링크 복사 */}
+          <button
+            onClick={handleShare}
+            disabled={sharing}
+            className="px-4 py-2 border border-gray-200 text-gray-700 text-sm font-medium rounded-lg hover:border-gray-400 disabled:opacity-50 transition-colors"
+          >
+            {sharing ? '생성 중...' : copied ? '✓ 링크 복사됨!' : '🔗 공유 링크'}
+          </button>
+          {/* PDF 다운로드 */}
+          <button
+            onClick={handleDownload}
+            disabled={!pdfUrl || loading}
+            className="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 disabled:opacity-50 transition-colors"
+          >
+            {loading ? 'PDF 생성 중...' : '⬇ PDF 다운로드'}
+          </button>
+        </div>
+        {/* 공유 URL 표시 */}
+        {shareUrl && (
+          <div className="mt-2 flex items-center gap-2 bg-blue-50 border border-blue-200 rounded-lg px-3 py-2">
+            <span className="text-xs text-blue-700 truncate flex-1">{shareUrl}</span>
+            <button
+              onClick={() => { navigator.clipboard.writeText(shareUrl); setCopied(true); setTimeout(() => setCopied(false), 3000) }}
+              className="text-xs text-blue-600 hover:text-blue-800 shrink-0 font-medium"
+            >
+              {copied ? '복사됨!' : '복사'}
+            </button>
+          </div>
+        )}
       </div>
 
       {/* PDF 프리뷰 */}
