@@ -18,6 +18,7 @@ export default function DashboardNav({ workspaceName, creditsUsed, creditsLimit,
     { href: '/dashboard', label: '대시보드' },
     { href: '/dashboard/clients', label: '클라이언트' },
     { href: '/dashboard/reports', label: '리포트' },
+    { href: '/dashboard/settings', label: '설정' },
   ]
 
   return (

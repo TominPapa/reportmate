@@ -45,6 +45,7 @@ model Workspace {
   reports       Report[]
   usageLedger   UsageLedger[]
   sharedLinks   SharedLink[]
+  appsumo_codes AppsumoCode[]
 
   @@map("workspaces")
 }
@@ -166,6 +167,21 @@ model SharedLink {
   workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
 
   @@map("shared_links")
+}
+
+// ── AppSumo Codes ────────────────────────────────────────────────────────────
+model AppsumoCode {
+  id          String    @id @default(uuid()) @db.Uuid
+  code        String    @unique
+  tier        Int       // 1 | 2 | 3 | 4
+  workspaceId String?   @map("workspace_id") @db.Uuid
+  redeemedAt  DateTime? @map("redeemed_at")
+  expiresAt   DateTime? @map("expires_at")
+  createdAt   DateTime  @default(now()) @map("created_at")
+
+  workspace Workspace? @relation(fields: [workspaceId], references: [id], onDelete: SetNull)
+
+  @@map("appsumo_codes")
 }
 
 // ── Usage & Credits ──────────────────────────────────────────────────────────

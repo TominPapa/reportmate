@@ -23,5 +23,18 @@ export default async function ReportDetailPage({ params }: { params: Promise<{ i
 
   if (!report) notFound()
 
-  return <ReportDetailClient report={report} />
+  // Prisma JsonValue → Record<string, unknown> 캐스팅
+  const serialized = {
+    ...report,
+    blocks: report.blocks.map(b => ({
+      ...b,
+      content: (b.content ?? {}) as Record<string, unknown>,
+    })),
+    dataset: {
+      ...report.dataset,
+      summaryMetricsJson: report.dataset.summaryMetricsJson as Record<string, unknown>,
+    },
+  }
+
+  return <ReportDetailClient report={serialized} />
 }
